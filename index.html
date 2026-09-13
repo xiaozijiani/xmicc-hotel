@@ -394,19 +394,6 @@
   }
   .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 
-  /* 微信内置浏览器引导 */
-  .wx-guide{display:none;position:fixed;inset:0;z-index:200;background:rgba(13,27,42,.94);color:#fff;flex-direction:column;justify-content:flex-start;align-items:center;padding-top:110px;text-align:center;}
-  .wx-guide.show{display:flex;}
-  .wx-guide-inner{padding:0 34px;}
-  .wx-guide-inner p{font-size:16px;line-height:1.9;letter-spacing:.08em;margin:0;}
-  .wx-guide-inner b{font-size:24px;color:var(--gold-soft);}
-  .wx-arrow{font-size:42px;margin:24px 0 18px;color:var(--gold-soft);animation:floatArrow 1.2s ease-in-out infinite;}
-  @keyframes floatArrow{0%,100%{transform:translateY(0);}50%{transform:translateY(-10px);}}
-  .wx-close{
-    margin-top:42px;padding:10px 28px;border-radius:999px;border:1px solid rgba(255,255,255,.35);
-    background:transparent;color:rgba(255,255,255,.8);font-size:12px;letter-spacing:.12em;cursor:pointer;
-  }
-
   footer{padding:44px 26px 120px;background:var(--ink);color:rgba(255,255,255,.55);text-align:center;}
   footer .f-brand{font-family:var(--serif);font-size:16px;color:#fff;letter-spacing:.2em;}
   footer .f-en{font-size:9px;letter-spacing:.18em;color:rgba(255,255,255,.35);margin-top:8px;text-transform:uppercase;}
@@ -437,16 +424,6 @@
 </style>
 </head>
 <body>
-<!-- 微信内置浏览器引导 -->
-<div class="wx-guide" id="wx-guide">
-  <div class="wx-guide-inner">
-    <div class="wx-arrow">↑</div>
-    <p>请点击右上角 <b>···</b></p>
-    <p>选择「在浏览器中打开」</p>
-    <button class="wx-close" id="wx-close" type="button">仍要在微信中浏览</button>
-  </div>
-</div>
-
 <div class="app">
 
   <!-- 大板块下拉回首页手势提示 -->
@@ -548,20 +525,6 @@
 
 <script>
 (function(){
-  /* 微信内置浏览器提示：workbuddy.host 域名在微信内常被拦截，引导用户用浏览器打开 */
-  if(/MicroMessenger/i.test(navigator.userAgent)){
-    var wg = document.getElementById('wx-guide');
-    if(wg){
-      wg.classList.add('show');
-      var wc = document.getElementById('wx-close');
-      if(wc){
-        wc.addEventListener('click', function(){
-          wg.classList.remove('show');
-        });
-      }
-    }
-  }
-
   var ICONS = {
     about:'<svg viewBox="0 0 24 24"><path d="M12 3l9 4.5v9L12 21 3 16.5v-9L12 3z"/><path d="M12 12l9-4.5M12 12v9M12 12L3 7.5"/></svg>',
     venues:'<svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="1.5"/><path d="M12 16v4M8 20h8M7 12l3-3 2 2 4-4"/></svg>',
