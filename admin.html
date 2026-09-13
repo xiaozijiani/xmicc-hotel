@@ -757,7 +757,7 @@
   /* ---------- 载入线上最新 ---------- */
   document.getElementById('btn-reload').addEventListener('click', function(){
     if(!confirm('载入线上最新内容？当前页面未导出的修改会丢失。')) return;
-    fetch('site.json?v=' + Date.now())
+    fetch('site-public.json?v=' + Date.now())
       .then(function(r){ if(!r.ok) throw 0; return r.json(); })
       .then(function(d){ state = d; renderTabs(); renderEditor(); toast('已载入线上最新内容'); })
       .catch(function(){ toast('载入失败，请刷新页面重试'); });
