@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>网站管理后台 · 厦门国际会议中心酒店</title>
+<style>
+  :root{
+    --ink:#0d1b2a;--gold:#c9a56a;--gold-soft:#d9bd8f;
+    --paper:#f5f2ec;--white:#fff;--text:#2b3a4a;--text-soft:#6b7a8a;--danger:#c0564f;
+    --serif:"Noto Serif SC","Songti SC","STSong",serif;
+    --sans:-apple-system,BlinkMacSystemFont,"PingFang SC","Helvetica Neue","Microsoft YaHei",sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:var(--sans);background:#0a1420;color:var(--text);display:flex;justify-content:center;min-height:100vh;}
+  .wrap{width:100%;max-width:560px;background:var(--paper);min-height:100vh;padding-bottom:60px;}
+  header{background:var(--ink);color:#fff;padding:26px 22px 22px;position:sticky;top:0;z-index:30;box-shadow:0 4px 20px rgba(0,0,0,.25);}
+  header h1{font-family:var(--serif);font-size:19px;letter-spacing:.12em;font-weight:700;}
+  header p{font-size:11px;color:rgba(255,255,255,.6);letter-spacing:.06em;margin-top:7px;line-height:1.8;}
+  .tabs{display:flex;gap:8px;margin-top:16px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none;}
+  .tabs::-webkit-scrollbar{display:none;}
+  .tab{flex:none;border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.06);color:rgba(255,255,255,.75);border-radius:999px;padding:8px 16px;font-size:12.5px;letter-spacing:.06em;cursor:pointer;font-family:var(--sans);transition:all .2s;}
+  .tab.on{background:linear-gradient(135deg,#d8b87e,#b98f52);color:#fff;border-color:transparent;font-weight:600;}
+  .tools{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;}
+  .btn{border:none;border-radius:999px;padding:10px 18px;font-size:12.5px;letter-spacing:.08em;cursor:pointer;font-family:var(--sans);transition:transform .2s;font-weight:600;}
+  .btn:active{transform:scale(.96);}
+  .btn-gold{background:linear-gradient(135deg,#d8b87e,#b98f52);color:#fff;}
+  .btn-dark{background:rgba(255,255,255,.12);color:#fff;border:1px solid rgba(255,255,255,.25);}
+  .btn-ghost{background:transparent;color:var(--gold);border:1px solid rgba(201,165,106,.5);}
+  .btn-danger{background:rgba(192,86,79,.12);color:var(--danger);border:1px solid rgba(192,86,79,.4);}
+  .btn-sm{padding:6px 12px;font-size:11px;letter-spacing:.04em;font-weight:400;}
+  .main{padding:20px 16px;}
+  .hint{font-size:11.5px;color:var(--text-soft);line-height:1.9;background:var(--white);border:1px dashed rgba(201,165,106,.5);border-radius:12px;padding:13px 15px;margin-bottom:16px;}
+  .hint b{color:var(--gold);}
+  .group-title{font-family:var(--serif);font-size:14px;color:var(--ink);letter-spacing:.14em;margin:22px 0 12px;display:flex;align-items:center;gap:10px;}
+  .group-title::before{content:"";width:18px;height:1px;background:var(--gold);}
+  .group-title.sub{font-size:12.5px;color:var(--gold);margin:16px -2px 10px;opacity:.92;}
+  .panel{border:1px solid rgba(13,27,42,.1);border-radius:18px;background:var(--white);padding:16px 14px;margin-bottom:14px;box-shadow:0 6px 18px rgba(13,27,42,.04);}
+  .f{margin-bottom:12px;}
+  .f:last-child{margin-bottom:0;}
+  .f label{display:block;font-size:10.5px;color:var(--text-soft);letter-spacing:.14em;margin-bottom:6px;}
+  .f input,.f textarea,.f select{
+    width:100%;padding:10px 12px;border:1px solid #e5e0d6;border-radius:10px;
+    font-size:13px;color:var(--ink);background:#fdfcfa;outline:none;font-family:var(--sans);
+    transition:border .2s;
+  }
+  .f input:focus,.f textarea:focus,.f select:focus{border-color:var(--gold);}
+  .f textarea{resize:vertical;min-height:64px;line-height:1.8;}
+  .img-row{display:flex;gap:10px;align-items:flex-start;}
+  .img-prev{width:72px;height:72px;border-radius:10px;object-fit:cover;background:#eee8db;border:1px solid #e5e0d6;flex:none;display:block;}
+  .img-controls{flex:1;display:flex;flex-direction:column;gap:8px;min-width:0;}
+  .file-btn{display:inline-block;border:1px solid rgba(201,165,106,.5);color:var(--gold);background:#faf6ee;border-radius:9px;padding:8px 11px;font-size:12px;cursor:pointer;text-align:center;letter-spacing:.06em;flex:none;}
+  .file-btn input{display:none;}
+  .item{border:1px solid rgba(13,27,42,.1);border-radius:16px;background:var(--white);padding:14px 12px;margin-bottom:12px;box-shadow:0 4px 14px rgba(13,27,42,.04);position:relative;}
+  .item-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
+  .item-head .no{font-family:var(--serif);color:var(--gold);font-size:12.5px;letter-spacing:.12em;}
+  .item-head .ops{display:flex;gap:6px;}
+  .add-btn{width:100%;border:1px dashed rgba(201,165,106,.6);background:#faf6ee;color:var(--gold);border-radius:14px;padding:12px;font-size:13px;letter-spacing:.1em;cursor:pointer;font-family:var(--sans);}
+  /* 图池 / 图集缩略图 */
+  .pool-box{background:var(--white);border:1px solid rgba(201,165,106,.35);border-radius:14px;padding:13px;}
+  .thumbs{display:flex;flex-wrap:wrap;gap:10px;margin:12px 0;}
+  .thumb-cell{width:86px;display:flex;flex-direction:column;gap:5px;align-items:center;}
+  .thumb{width:86px;height:60px;object-fit:cover;border-radius:8px;border:1px solid #e5e0d6;background:#eee8db;display:block;}
+  .thumb-cell .tn{font-size:10.5px;color:var(--text-soft);letter-spacing:.08em;}
+  .thumb-cell select{width:100%;font-size:11px;padding:4px 3px;border:1px solid #e5e0d6;border-radius:7px;background:var(--white);color:var(--ink);}
+  .thumb-cell .btn-danger{width:100%;padding:4px 0;font-size:11px;}
+  .pool-box .hint{margin:0 0 6px;}
+  .toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(20px);background:rgba(13,27,42,.95);color:#fff;font-size:12.5px;padding:12px 26px;border-radius:999px;opacity:0;pointer-events:none;transition:all .35s;z-index:99;border:1px solid rgba(201,165,106,.5);letter-spacing:.06em;max-width:90%;text-align:center;}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+  .preview-pane{display:none;position:fixed;inset:0;background:rgba(10,20,32,.95);z-index:50;overflow-y:auto;padding:24px 0 60px;}
+  .preview-pane .inner{max-width:480px;margin:0 auto;padding:0 18px;}
+  .preview-pane .close{position:fixed;top:16px;right:16px;z-index:51;width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.15);border:none;color:#fff;font-size:18px;cursor:pointer;}
+  .p-title{color:#fff;font-family:var(--serif);font-size:16px;letter-spacing:.14em;margin:18px 0 12px;text-align:center;}
+  .p-card{background:#fff;border-radius:16px;overflow:hidden;margin-bottom:14px;}
+  .p-card img{width:100%;height:170px;object-fit:cover;display:block;}
+  .p-card .b{padding:14px;}
+  .p-card .t{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:9px;}
+  .p-card .t span{font-size:10px;color:var(--gold);border:1px solid rgba(201,165,106,.45);padding:2px 9px;border-radius:999px;letter-spacing:.1em;}
+  .p-card h4{font-family:var(--serif);font-size:15px;color:#0d1b2a;letter-spacing:.06em;margin-bottom:7px;line-height:1.5;}
+  .p-card p{font-size:12px;color:var(--text-soft);line-height:1.9;}
+  .p-sec{background:#fff;border-radius:16px;padding:16px;margin-bottom:14px;}
+  .p-sec h4{font-family:var(--serif);font-size:14px;color:#0d1b2a;letter-spacing:.08em;margin-bottom:8px;}
+  .p-sec p{font-size:12px;color:var(--text-soft);line-height:1.9;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>网站管理后台</h1>
+    <p>编辑手机官网的全部文字与图片 · 完成后导出 site.json 发给助手发布<br>客人访问的链接永不变化</p>
+    <div class="tabs" id="tabs"></div>
+    <div class="tools">
+      <button class="btn btn-dark" id="btn-preview">预览效果</button>
+      <button class="btn btn-gold" id="btn-save">导出 site.json</button>
+      <button class="btn btn-dark" id="btn-copy">复制 JSON</button>
+      <button class="btn btn-dark" id="btn-reload">载入线上最新</button>
+      <button class="btn btn-dark" id="btn-import">导入修改</button>
+      <input type="file" id="file-import" accept="application/json" style="display:none">
+    </div>
+  </header>
+  <div class="main">
+    <div class="hint">
+      <b>使用说明：</b>① 上方页签切换到要改的页面；② 直接修改文字、点击「选择图片」上传新图；③ 列表类内容可增删排序；④ 全部改完点「导出 site.json」，把文件发给助手即可上线。<br>
+      <b>会场设施图片规则：</b>每个厅有 <b>「卡片封面图」</b>（用于列表缩略 & 详情页头图，<u>独立一张，不取自图集</u>）和 <b>「图集图片」</b>（详情页简介下方滚动展示，最多可加多张）。两者互不相同，改封面不会影响图集。<br>
+      <b>如果看到旧内容：</b>点「载入线上最新」可拉取服务器当前真实数据（会丢弃本页未导出的修改）。
+    </div>
+    <div id="editor"></div>
+  </div>
+</div>
+
+<div class="preview-pane" id="preview">
+  <button class="close" id="btn-close">✕</button>
+  <div class="inner" id="preview-body"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+  var editorEl = document.getElementById('editor');
+  var state = null;
+  var curTab = 'home';
+
+  var PAGE_OPTS = [
+    {v:'home',t:'首页'},{v:'about',t:'品牌简介'},{v:'venues',t:'会场设施'},{v:'cases',t:'宴会案例'},{v:'contact',t:'联系我们'}
+  ];
+  var ICON_OPTS = [
+    {v:'about',t:'图标·简介'},{v:'venues',t:'图标·设施'},{v:'cases',t:'图标·案例'},{v:'contact',t:'图标·联系'},
+    {v:'addr',t:'图标·地址'},{v:'phone',t:'图标·电话'},{v:'mail',t:'图标·邮箱'},{v:'time',t:'图标·时间'},
+    {v:'team',t:'图标·团队'},{v:'tech',t:'图标·设备'},{v:'room',t:'图标·客房'}
+  ];
+
+  var SECTIONS = [
+    {id:'home', label:'首页', fields:[
+      {g:'首屏大图'},
+      {p:'home.hero.image', l:'主图（竖版大图）', t:'image'},
+      {p:'home.hero.badge', l:'徽章文字', t:'text'},
+      {p:'home.hero.kicker', l:'英文小标', t:'text'},
+      {p:'home.hero.title', l:'主标题', t:'text'},
+      {p:'home.hero.sub', l:'副标题', t:'text'},
+      {p:'home.hero.en', l:'英文标题', t:'text'},
+      {g:'品牌简介区（首图下方）'},
+      {p:'home.brand.quote', l:'金句（居中衬线大字）', t:'textarea'},
+      {p:'home.brand.paras', l:'简介段落（每行一段）', t:'lines'},
+      {p:'home.brand.more', l:'「了解更多」按钮文字', t:'text'},
+      {g:'酒店亮点（深色数据带）'},
+      {p:'home.highlights.label', l:'板块标签（如 酒店亮点 · HIGHLIGHTS）', t:'text'},
+      {p:'home.highlights.stats', l:'', t:'list', name:'亮点', add:{num:'0',unit:'',label:'说明'},
+        itemFields:[
+          {k:'num', l:'数字', t:'text'},
+          {k:'unit', l:'单位（如 ㎡ / 间）', t:'text'},
+          {k:'label', l:'说明文字', t:'text'}
+        ]},
+      {g:'四大导航卡片'},
+      {p:'home.cards', l:'', t:'list', name:'卡片', add:{image:'',en:'NEW',title:'新板块',desc:'',goto:'about'},
+        itemFields:[
+          {k:'image', l:'卡片图片', t:'image'},
+          {k:'en', l:'英文小标（如 MEETINGS）', t:'text'},
+          {k:'title', l:'卡片标题', t:'text'},
+          {k:'desc', l:'描述一行', t:'text'},
+          {k:'goto', l:'跳转页面', t:'select', opts:PAGE_OPTS}
+        ]},
+      {g:'底部行动区（电话 + 预约）'},
+      {p:'home.actions.title', l:'标题', t:'text'},
+      {p:'home.actions.sub', l:'副题', t:'text'},
+      {p:'home.actions.phoneLabel', l:'电话按钮文字', t:'text'},
+      {p:'home.actions.phone', l:'电话号码（点击可直接拨号）', t:'text'},
+      {p:'home.actions.bookLabel', l:'预约按钮文字', t:'text'},
+      {p:'home.actions.note', l:'底部小字说明', t:'text'}
+    ]},
+    {id:'about', label:'品牌简介', fields:[
+      {g:'页头'},
+      {p:'about.headImage', l:'页头大图', t:'image'},
+      {p:'about.kicker', l:'英文小标', t:'text'},
+      {p:'about.title', l:'页面标题', t:'text'},
+      {p:'about.en', l:'英文标题', t:'text'},
+      {g:'正文内容'},
+      {p:'about.paras', l:'正文段落（每行一段）', t:'lines'},
+      {g:'区位优势列表'},
+      {p:'about.locs', l:'', t:'list', name:'优势', add:{no:'壹',title:'新优势',desc:''},
+        itemFields:[
+          {k:'no', l:'序号（壹/贰/叁…）', t:'text'},
+          {k:'title', l:'标题', t:'text'},
+          {k:'desc', l:'描述', t:'textarea'}
+        ]},
+      {g:'底部行动区'},
+      {p:'about.cta.title', l:'标题', t:'text'},
+      {p:'about.cta.subtitle', l:'副题', t:'text'},
+      {p:'about.cta.btn', l:'按钮文字', t:'text'}
+    ]},
+    {id:'venues', label:'会场设施', fields:[
+      {g:'页头'},
+      {p:'venues.headImage', l:'页头大图', t:'image'},
+      {p:'venues.kicker', l:'英文小标', t:'text'},
+      {p:'venues.title', l:'页面标题', t:'text'},
+      {p:'venues.en', l:'英文标题', t:'text'},
+      {g:'场馆卡片'},
+      {p:'venues.list', l:'', t:'list', name:'场馆', add:{tag:'新场馆',image:'',name:'新厅',size:'',capacity:'',desc:'',detail:'',images:[],meta:[]},
+        itemFields:[
+          {k:'image', l:'卡片封面图（列表缩略 & 详情页头图，独立一张，不取自图集）', t:'image'},
+          {k:'tag', l:'左上角标签', t:'text'},
+          {k:'name', l:'场馆名称', t:'text'},
+          {k:'size', l:'面积（如 2,400 ㎡）', t:'text'},
+          {k:'capacity', l:'最大容纳人数（如 1200）', t:'text'},
+          {k:'desc', l:'卡片一句话描述', t:'textarea'},
+          {g:'详情页（点击厅进入后展示）'},
+          {k:'detail', l:'详情页简介（可多行）', t:'textarea'},
+          {k:'images', l:'', t:'list', name:'图集图片', add:'', itemFields:[{k:'image', l:'图片', t:'image'}]},
+          {g:'其他'},
+          {k:'meta', l:'特性标签（逗号分隔）', t:'csv'}
+        ]},
+      {g:'底部行动区'},
+      {p:'venues.cta.title', l:'标题', t:'text'},
+      {p:'venues.cta.subtitle', l:'副题', t:'text'},
+      {p:'venues.cta.btn', l:'按钮文字', t:'text'}
+    ]},
+    {id:'cases', label:'宴会案例', fields:[
+      {g:'页头'},
+      {p:'cases.headImage', l:'页头大图', t:'image'},
+      {p:'cases.kicker', l:'英文小标', t:'text'},
+      {p:'cases.title', l:'页面标题', t:'text'},
+      {p:'cases.en', l:'英文标题', t:'text'},
+      {g:'引导区'},
+      {p:'cases.intro.label', l:'小标签', t:'text'},
+      {p:'cases.intro.title', l:'引导标题', t:'text'},
+      {p:'cases.intro.desc', l:'引导描述', t:'textarea'},
+      {g:'图片库（图池）'},
+      {p:'cases.imgs', l:'', t:'pool'},
+      {g:'案例分类（第一级 · 首页的封面卡）'},
+      {p:'cases.list', l:'', t:'list', name:'分类',
+        add:{id:'',title:'新分类',en:'',tag:'',image:'',desc:'',cases:[]},
+        itemFields:[
+          {k:'image', l:'分类封面图（从图池挑，或上传新图）', t:'poolimg'},
+          {k:'title', l:'分类名称', t:'text'},
+          {k:'en', l:'英文小标', t:'text'},
+          {k:'tag', l:'右上角角标（如 国宾级）', t:'text'},
+          {k:'desc', l:'分类描述', t:'textarea'},
+          {g:'该分类下的案例（第二级 · 点封面卡进入）'},
+          {k:'cases', l:'', t:'list', name:'案例',
+            add:{id:'',title:'新案例',cover:'',meta:[],desc:'',images:[]},
+            itemFields:[
+              {k:'cover', l:'案例封面图（列表缩略 & 详情头图）', t:'poolimg'},
+              {k:'title', l:'案例名称', t:'text'},
+              {k:'meta', l:'特性标签（逗号分隔；详情页只展示第一个）', t:'csv'},
+              {k:'desc', l:'案例描述', t:'textarea'},
+              {g:'实景图集（详情页一张接一张展示）'},
+              {k:'images', l:'', t:'poollist', name:'图片'}
+            ]}
+        ]},
+      {g:'底部行动区'},
+      {p:'cases.cta.title', l:'标题', t:'text'},
+      {p:'cases.cta.subtitle', l:'副题', t:'text'},
+      {p:'cases.cta.btn', l:'按钮文字', t:'text'}
+    ]},
+    {id:'weddings', label:'婚礼婚宴', fields:[
+      {g:'页头'},
+      {p:'weddings.headImage', l:'页头大图', t:'image'},
+      {p:'weddings.kicker', l:'英文小标', t:'text'},
+      {p:'weddings.title', l:'页面标题', t:'text'},
+      {p:'weddings.en', l:'英文标题', t:'text'},
+      {g:'引导区'},
+      {p:'weddings.intro.label', l:'小标签', t:'text'},
+      {p:'weddings.intro.title', l:'引导标题', t:'text'},
+      {p:'weddings.intro.desc', l:'引导描述', t:'textarea'},
+      {g:'婚礼方案卡片'},
+      {p:'weddings.list', l:'', t:'list', name:'方案', add:{tag:'新方案',image:'',name:'新婚礼',desc:'',detail:'',images:[],meta:[]},
+        itemFields:[
+          {k:'image', l:'卡片封面图（列表缩略 & 详情页头图，独立一张，不取自图集）', t:'image'},
+          {k:'tag', l:'左上角标签', t:'text'},
+          {k:'name', l:'方案名称', t:'text'},
+          {k:'desc', l:'卡片一句话描述', t:'textarea'},
+          {g:'详情页（点击方案进入后展示）'},
+          {k:'detail', l:'详情页简介（可多行）', t:'textarea'},
+          {k:'images', l:'', t:'list', name:'图集图片', add:'', itemFields:[{k:'image', l:'图片', t:'image'}]},
+          {g:'其他'},
+          {k:'meta', l:'特性标签（逗号分隔）', t:'csv'}
+        ]},
+      {g:'底部行动区'},
+      {p:'weddings.cta.title', l:'标题', t:'text'},
+      {p:'weddings.cta.subtitle', l:'副题', t:'text'},
+      {p:'weddings.cta.btn', l:'按钮文字', t:'text'}
+    ]},
+    {id:'contact', label:'联系我们', fields:[
+      {g:'页头'},
+      {p:'contact.headImage', l:'页头大图', t:'image'},
+      {p:'contact.kicker', l:'英文小标', t:'text'},
+      {p:'contact.title', l:'页面标题', t:'text'},
+      {p:'contact.en', l:'英文标题', t:'text'},
+      {g:'联系信息列表'},
+      {p:'contact.items', l:'', t:'list', name:'信息', add:{icon:'addr',title:'新信息',lines:['']},
+        itemFields:[
+          {k:'icon', l:'图标', t:'select', opts:ICON_OPTS},
+          {k:'title', l:'标题（如 预订热线）', t:'text'},
+          {k:'lines', l:'内容（每行一条）', t:'lines'}
+        ]},
+      {g:'在线垂询表单'},
+      {p:'contact.form.title', l:'表单标题', t:'text'},
+      {p:'contact.form.sub', l:'表单副题', t:'text'},
+      {p:'contact.form.types', l:'垂询类型选项（每行一个）', t:'lines'},
+      {p:'contact.form.success', l:'提交成功提示', t:'text'},
+      {p:'contact.form.error', l:'填写缺失提示', t:'text'},
+      {g:'页脚'},
+      {p:'footer.brand', l:'页脚品牌名', t:'text'},
+      {p:'footer.en', l:'页脚英文名', t:'text'},
+      {p:'footer.lines', l:'页脚文字（每行一条）', t:'lines'}
+    ]}
+  ];
+
+  function toast(msg){
+    var t = document.getElementById('toast');
+    t.textContent = msg; t.classList.add('show');
+    clearTimeout(t._h); t._h = setTimeout(function(){ t.classList.remove('show'); }, 2600);
+  }
+  function esc(s){
+    return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+  function getP(path){
+    return path.split('.').reduce(function(a,k){ return (a == null) ? a : a[k]; }, state);
+  }
+  function setP(path, v){
+    var ks = path.split('.'); var t = state;
+    for(var i = 0; i < ks.length - 1; i++){ t = t[ks[i]]; }
+    t[ks[ks.length - 1]] = v;
+  }
+
+  /* ---------- 图片压缩（长边 ≤1920、JPEG 质量 0.85） ---------- */
+  var MAX_LONG = 1920, JPEG_Q = 0.85;
+  function compressImg(file, cb){
+    var rd = new FileReader();
+    rd.onload = function(){
+      var img = new Image();
+      img.onload = function(){
+        var w = img.width, h = img.height, L = Math.max(w, h);
+        if(L > MAX_LONG){ var s = MAX_LONG / L; w = Math.round(w * s); h = Math.round(h * s); }
+        var cv = document.createElement('canvas');
+        cv.width = w; cv.height = h;
+        cv.getContext('2d').drawImage(img, 0, 0, w, h);
+        cb(cv.toDataURL('image/jpeg', JPEG_Q), w, h);
+      };
+      img.onerror = function(){ cb(null); };
+      img.src = rd.result;
+    };
+    rd.onerror = function(){ cb(null); };
+    rd.readAsDataURL(file);
+  }
+
+  /* ---------- 案例图池（cases.imgs，存 base64；别处只存索引） ---------- */
+  function poolArr(){
+    if(!state.cases) return [];
+    if(!Array.isArray(state.cases.imgs)) state.cases.imgs = [];
+    return state.cases.imgs;
+  }
+  /* 入池：内容相同则复用已有索引（去重），返回索引 */
+  function poolAdd(dataUri){
+    var pool = poolArr();
+    var exist = pool.indexOf(dataUri);
+    if(exist >= 0) return { idx: exist, reused: true };
+    pool.push(dataUri);
+    return { idx: pool.length - 1, reused: false };
+  }
+  function poolSrc(v){
+    var pool = poolArr();
+    var i = parseInt(v, 10);
+    return (isNaN(i) || !pool[i]) ? '' : pool[i];
+  }
+  var PH = 'data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2272%22 height=%2272%22><rect width=%2272%22 height=%2272%22 fill=%22%23eee8db%22/><text x=%2236%22 y=%2239%22 font-size=%2210%22 fill=%22%23b98f52%22 text-anchor=%22middle%22>无图</text></svg>';
+  /* 图池下拉选项：图 1 / 图 2 … */
+  function poolOpts(cur){
+    var pool = poolArr();
+    var h = '<option value=""' + (cur === '' || cur == null ? ' selected' : '') + '>（未选择）</option>';
+    pool.forEach(function(_, i){
+      h += '<option value="' + i + '"' + (String(cur) === String(i) ? ' selected' : '') + '>图 ' + (i + 1) + '</option>';
+    });
+    return h;
+  }
+  /* 统计图池里被引用/未被引用的图 */
+  function poolUsage(){
+    var pool = poolArr();
+    var used = new Set();
+    (state.cases.list || []).forEach(function(cat){
+      if(cat.image != null && cat.image !== '') used.add(parseInt(cat.image, 10));
+      (cat.cases || []).forEach(function(sc){
+        if(sc.cover != null && sc.cover !== '') used.add(parseInt(sc.cover, 10));
+        (sc.images || []).forEach(function(x){ used.add(parseInt(x, 10)); });
+      });
+    });
+    return { total: pool.length, unused: pool.map(function(_, i){ return i; }).filter(function(i){ return !used.has(i); }) };
+  }
+
+  /* ---------- 字段渲染 ---------- */
+  function fieldHTML(f, path, val){
+    var v = (val == null) ? '' : val;
+    var html = '<div class="f"><label>' + esc(f.l) + '</label>';
+    if(f.t === 'textarea'){
+      html += '<textarea data-path="' + path + '">' + esc(v) + '</textarea>';
+    }else if(f.t === 'lines'){
+      html += '<textarea data-path="' + path + '" data-type="lines" placeholder="每行一条">' + esc(Array.isArray(v) ? v.join('\n') : v) + '</textarea>';
+    }else if(f.t === 'csv'){
+      html += '<input data-path="' + path + '" data-type="csv" value="' + esc(Array.isArray(v) ? v.join('，') : v) + '" placeholder="多个用逗号分隔">';
+    }else if(f.t === 'select'){
+      html += '<select data-path="' + path + '">' + f.opts.map(function(o){
+        return '<option value="' + esc(o.v) + '"' + (v === o.v ? ' selected' : '') + '>' + esc(o.t) + '</option>';
+      }).join('') + '</select>';
+    }else if(f.t === 'image'){
+      var prev = v ? esc(v) : 'data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2272%22 height=%2272%22><rect width=%2272%22 height=%2272%22 fill=%22%23eee8db%22/><text x=%2236%22 y=%2239%22 font-size=%2210%22 fill=%22%23b98f52%22 text-anchor=%22middle%22>无图</text></svg>';
+      var urlVal = (typeof v === 'string' && v.indexOf('data:') !== 0) ? v : '';
+      html += '<div class="img-row"><img class="img-prev" src="' + prev + '" data-prev="' + path + '">' +
+        '<div class="img-controls">' +
+        '<label class="file-btn">选择图片<input type="file" accept="image/*" data-img="' + path + '"></label>' +
+        '<input data-path="' + path + '" value="' + esc(urlVal) + '" placeholder="或粘贴图片地址（可选）"></div></div>';
+    }else if(f.t === 'poolimg'){
+      /* 图池单图：值存的是图池索引，预览从 imgs 取 */
+      var psrc = poolSrc(v) || PH;
+      html += '<div class="img-row"><img class="img-prev" src="' + esc(psrc) + '" data-prev="' + path + '">' +
+        '<div class="img-controls">' +
+        '<label class="file-btn">上传新图<input type="file" accept="image/*" data-poolimg="' + path + '"></label>' +
+        '<select data-path="' + path + '" data-type="poolidx">' + poolOpts(v) + '</select>' +
+        '</div></div>' +
+        '<div class="hint">上传的图会自动压缩（长边 ' + MAX_LONG + 'px）并存入「图片库」，此处只记录编号；重复图片自动复用，不会让文件变大。</div>';
+    }else if(f.t === 'poollist'){
+      /* 图池图集：值是索引数组 */
+      var arr2 = Array.isArray(v) ? v : [];
+      html += '<div data-poollist="' + path + '"><div class="thumbs">';
+      if(!arr2.length){ html += '<div class="hint">暂无图片，点下方按钮添加。</div>'; }
+      arr2.forEach(function(x, i){
+        html += '<div class="thumb-cell">' +
+          '<img class="thumb" src="' + esc(poolSrc(x) || PH) + '" data-prev="' + path + '.' + i + '">' +
+          '<select data-path="' + path + '.' + i + '" data-type="poolidx">' + poolOpts(x) + '</select>' +
+          '<button class="btn btn-sm btn-danger" data-poollist-del="' + path + '.' + i + '">删除</button>' +
+          '</div>';
+      });
+      html += '</div>' +
+        '<label class="file-btn">＋ 添加图片<input type="file" accept="image/*" multiple data-poolimg-add="' + path + '"></label></div>';
+    }else if(f.t === 'pool'){
+      /* 图片库管理面板 */
+      var u = poolUsage(), pool = poolArr();
+      html += '<div class="pool-box">' +
+        '<div class="hint">共 <b>' + u.total + '</b> 张图' +
+        (u.unused.length ? '，其中 <b>' + u.unused.length + '</b> 张未被使用（编号 ' + u.unused.map(function(i){ return i + 1; }).join('、') + '）' : '，全部已使用') +
+        '。</div>';
+      if(u.total){
+        html += '<div class="thumbs">' + pool.map(function(src, i){
+          return '<div class="thumb-cell"><img class="thumb" src="' + esc(src) + '"><span class="tn">图 ' + (i + 1) + '</span></div>';
+        }).join('') + '</div>';
+      }
+      html += '<label class="file-btn">＋ 上传图片到库<input type="file" accept="image/*" multiple data-poolimg-add="cases.imgs"></label>' +
+        (u.unused.length ? ' <button class="btn btn-sm btn-ghost" data-pool-clean="1">清理未使用的图</button>' : '') +
+        '</div>';
+    }else if(f.t === 'list'){
+      html += listHTML({p:path, name:f.name || '项', add:f.add, itemFields:f.itemFields});
+    }else{
+      html += '<input data-path="' + path + '" value="' + esc(v) + '">';
+    }
+    return html + '</div>';
+  }
+
+  function listHTML(f){
+    var arr = getP(f.p) || [];
+    var html = '<div data-list="' + f.p + '">';
+    arr.forEach(function(item, i){
+      html += '<div class="item" data-idx="' + i + '"><div class="item-head">' +
+        '<span class="no">' + esc(f.name) + ' ' + String(i + 1).padStart(2, '0') + '</span>' +
+        '<div class="ops">' +
+        '<button class="btn btn-sm btn-ghost" data-act="up" ' + (i === 0 ? 'disabled style="opacity:.35"' : '') + '>↑</button>' +
+        '<button class="btn btn-sm btn-ghost" data-act="down" ' + (i === arr.length - 1 ? 'disabled style="opacity:.35"' : '') + '>↓</button>' +
+        '<button class="btn btn-sm btn-danger" data-act="del">删除</button></div></div>';
+      f.itemFields.forEach(function(sf){
+        if(sf.g){ html += '<div class="group-title sub">' + esc(sf.g) + '</div>'; return; }
+        var subPath, subVal;
+        if(sf.t === 'image' && typeof item === 'string'){
+          // 图集项为纯字符串图片（线上数据常见格式）：整项即图片
+          subPath = f.p + '.' + i;
+          subVal = item;
+        } else {
+          subPath = f.p + '.' + i + '.' + sf.k;
+          subVal = item[sf.k];
+        }
+        html += fieldHTML(sf, subPath, subVal);
+      });
+      html += '</div>';
+    });
+    html += '<button class="add-btn" data-add="' + f.p + '" data-addtpl="' + esc(JSON.stringify(f.add || {})) + '">＋ 添加' + esc(f.name) + '</button></div>';
+    return html;
+  }
+
+  function renderEditor(){
+    var sec = SECTIONS.filter(function(s){ return s.id === curTab; })[0];
+    var html = '';
+    var inPanel = false;
+    sec.fields.forEach(function(f){
+      if(f.g){
+        if(inPanel){ html += '</div>'; }
+        html += '<div class="group-title">' + esc(f.g) + '</div><div class="panel">';
+        inPanel = true;
+        return;
+      }
+      if(!inPanel){ html += '<div class="panel">'; inPanel = true; }
+      if(f.t === 'list'){ html += listHTML(f); }
+      else{ html += fieldHTML(f, f.p, getP(f.p)); }
+    });
+    if(inPanel){ html += '</div>'; }
+    editorEl.innerHTML = html;
+  }
+
+  function renderTabs(){
+    var t = document.getElementById('tabs');
+    t.innerHTML = '';
+    SECTIONS.forEach(function(s){
+      var b = document.createElement('button');
+      b.className = 'tab' + (s.id === curTab ? ' on' : '');
+      b.textContent = s.label;
+      b.addEventListener('click', function(){ curTab = s.id; renderTabs(); renderEditor(); window.scrollTo(0, 0); });
+      t.appendChild(b);
+    });
+  }
+
+  /* ---------- 事件绑定 ---------- */
+  editorEl.addEventListener('input', function(e){
+    var t = e.target, path = t.dataset.path;
+    if(!path) return;
+    var type = t.dataset.type;
+    if(type === 'lines'){ setP(path, t.value.split('\n').map(function(s){ return s; })); }
+    else if(type === 'csv'){ setP(path, t.value.split(/[,，]/).map(function(s){ return s.trim(); }).filter(Boolean)); }
+    else if(type === 'poolidx'){ setP(path, t.value === '' ? '' : parseInt(t.value, 10)); }
+    else { setP(path, t.value); }
+    var prev = editorEl.querySelector('[data-prev="' + path + '"]');
+    if(prev && !t.dataset.img && t.value.indexOf('data:') === 0){ prev.src = t.value; }
+  });
+
+  editorEl.addEventListener('change', function(e){
+    var t = e.target;
+
+    /* 图池单图上传：压缩 → 入池 → 该字段只存编号 */
+    if(t.dataset.poolimg !== undefined){
+      var f0 = t.files && t.files[0];
+      if(!f0) return;
+      toast('正在压缩图片…');
+      compressImg(f0, function(uri, w, h){
+        if(!uri){ toast('图片读取失败'); return; }
+        var r = poolAdd(uri);
+        setP(t.dataset.poolimg, r.idx);
+        renderEditor();
+        toast(r.reused
+          ? ('这张图已在库中，直接复用（图 ' + (r.idx + 1) + '）')
+          : ('已压缩为 ' + w + '×' + h + '，存入图片库（图 ' + (r.idx + 1) + '）'));
+      });
+      return;
+    }
+
+    /* 图集 / 图片库 批量添加（可多选） */
+    if(t.dataset.poolimgAdd !== undefined){
+      var fs = Array.prototype.slice.call(t.files || []);
+      if(!fs.length) return;
+      var target = t.dataset.poolimgAdd;
+      var done = 0, okN = 0;
+      toast('正在处理 ' + fs.length + ' 张图片…');
+      fs.forEach(function(f){
+        compressImg(f, function(uri){
+          if(uri){
+            var r = poolAdd(uri);
+            /* 若目标不是图片库本身，则把编号追加到该图集数组 */
+            if(target !== 'cases.imgs'){
+              var arr = getP(target) || [];
+              arr.push(r.idx);
+              setP(target, arr);
+            }
+            okN++;
+          }
+          done++;
+          if(done === fs.length){
+            renderEditor();
+            toast('已加入 ' + okN + ' 张图（自动压缩 · 重复自动复用）');
+          }
+        });
+      });
+      return;
+    }
+
+    /* 普通图片：压缩后直接嵌入（首页/会场/婚礼等） */
+    if(t.dataset.img !== undefined){
+      var f = t.files && t.files[0];
+      if(!f) return;
+      toast('正在压缩图片…');
+      compressImg(f, function(uri, w, h){
+        if(!uri){ toast('图片读取失败'); return; }
+        setP(t.dataset.img, uri);
+        var prev = editorEl.querySelector('[data-prev="' + t.dataset.img + '"]');
+        if(prev) prev.src = uri;
+        toast('已压缩为 ' + w + '×' + h + ' 并嵌入（导出后生效）');
+      });
+    }
+  });
+
+  editorEl.addEventListener('click', function(e){
+    /* 图片库：清理未被引用的图（从后往前删，避免编号错位） */
+    var clean = e.target.closest('[data-pool-clean]');
+    if(clean){
+      var u = poolUsage();
+      if(!u.unused.length){ toast('没有未使用的图'); return; }
+      if(!confirm('将删除 ' + u.unused.length + ' 张未被使用的图片，确定吗？')) return;
+      var pool = poolArr();
+      u.unused.slice().sort(function(a, b){ return b - a; }).forEach(function(i){ pool.splice(i, 1); });
+      /* 删除后，所有 ≥ 被删编号的引用都要前移 */
+      var removed = u.unused.slice().sort(function(a, b){ return a - b; });
+      function remap(v){
+        if(v == null || v === '') return v;
+        var n = parseInt(v, 10);
+        if(isNaN(n)) return v;
+        var shift = removed.filter(function(r){ return r < n; }).length;
+        return n - shift;
+      }
+      (state.cases.list || []).forEach(function(cat){
+        if(cat.image != null && cat.image !== '') cat.image = remap(cat.image);
+        (cat.cases || []).forEach(function(sc){
+          if(sc.cover != null && sc.cover !== '') sc.cover = remap(sc.cover);
+          if(Array.isArray(sc.images)) sc.images = sc.images.map(remap);
+        });
+      });
+      renderEditor();
+      toast('已清理 ' + u.unused.length + ' 张未使用的图');
+      return;
+    }
+    /* 图集：删除某一张（只删编号引用，图片本身留在库中可复用） */
+    var pdel = e.target.closest('[data-poollist-del]');
+    if(pdel){
+      var dpath = pdel.dataset.poollistDel;      // 形如 cases.list.0.cases.1.images.2
+      var ks = dpath.split('.');
+      var di = parseInt(ks.pop(), 10);
+      var arrPath = ks.join('.');
+      var arr2 = getP(arrPath) || [];
+      arr2.splice(di, 1);
+      setP(arrPath, arr2);
+      renderEditor();
+      toast('已从图集移除（图片仍在库中）');
+      return;
+    }
+    var add = e.target.closest('[data-add]');
+    if(add){
+      var p = add.dataset.add;
+      var sec = SECTIONS.filter(function(s){ return s.id === curTab; })[0];
+      var fd = sec.fields.filter(function(f){ return f.p === p; })[0];
+      var arr = getP(p) || [];
+      if(fd){ arr.push(JSON.parse(JSON.stringify(fd.add))); }
+      else {
+        var tpl = add.getAttribute('data-addtpl');
+        arr.push(tpl ? JSON.parse(tpl) : {});
+      }
+      setP(p, arr);
+      renderEditor();
+      toast('已添加' + (fd ? fd.name : '项') + '，请填写内容');
+      return;
+    }
+    var b = e.target.closest('[data-act]');
+    if(!b) return;
+    var listEl = b.closest('[data-list]');
+    var idx = parseInt(b.closest('.item').dataset.idx, 10);
+    var path = listEl.dataset.list;
+    var arr = getP(path);
+    var act = b.dataset.act;
+    if(act === 'del'){ arr.splice(idx, 1); toast('已删除'); }
+    if(act === 'up' && idx > 0){ var x = arr[idx - 1]; arr[idx - 1] = arr[idx]; arr[idx] = x; }
+    if(act === 'down' && idx < arr.length - 1){ var y = arr[idx + 1]; arr[idx + 1] = arr[idx]; arr[idx] = y; }
+    renderEditor();
+  });
+
+  /* ---------- 导出 / 复制 / 导入 ---------- */
+  function buildJSON(){
+    state.updatedAt = new Date().toISOString().slice(0, 10);
+    return state;
+  }
+
+  document.getElementById('btn-save').addEventListener('click', function(){
+    var blob = new Blob([JSON.stringify(buildJSON(), null, 2)], {type:'application/json'});
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'site.json';
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function(){ URL.revokeObjectURL(a.href); }, 4000);
+    toast('已导出 site.json，发给助手即可上线');
+  });
+
+  document.getElementById('btn-copy').addEventListener('click', function(){
+    var txt = JSON.stringify(buildJSON());
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(txt).then(function(){ toast('JSON 已复制到剪贴板'); });
+    }else{
+      var ta = document.createElement('textarea');
+      ta.value = txt; document.body.appendChild(ta); ta.select();
+      document.execCommand('copy'); ta.remove(); toast('JSON 已复制到剪贴板');
+    }
+  });
+
+  document.getElementById('btn-import').addEventListener('click', function(){
+    document.getElementById('file-import').click();
+  });
+  document.getElementById('file-import').addEventListener('change', function(e){
+    var f = e.target.files && e.target.files[0];
+    if(!f) return;
+    var rd = new FileReader();
+    rd.onload = function(){
+      try{
+        state = JSON.parse(rd.result);
+        renderTabs(); renderEditor();
+        toast('已导入 site.json，可继续编辑');
+      }catch(err){ toast('文件格式有误，导入失败'); }
+    };
+    rd.readAsText(f);
+  });
+
+  /* ---------- 预览 ---------- */
+  document.getElementById('btn-preview').addEventListener('click', function(){
+    var d = state;
+    var pv = document.getElementById('preview-body');
+    var html = '';
+    html += '<div class="p-sec"><h4>首页首屏</h4><p>' + esc(d.home.hero.title) + ' · ' + esc(d.home.hero.sub) + '<br>' + esc(d.home.hero.badge) + '</p></div>';
+    html += '<div class="p-sec"><h4>首页品牌简介</h4><p>' + esc((d.home.brand || {}).quote || '') + '</p></div>';
+    html += '<div class="p-sec"><h4>酒店亮点</h4><p>' + ((d.home.highlights || {}).stats || []).map(function(s){ return esc(s.num + (s.unit || '') + ' ' + s.label); }).join(' / ') + '</p></div>';
+    html += '<div class="p-title">导航卡片</div>';
+    (d.home.cards || []).forEach(function(c){
+      var img = c.image ? c.image : 'data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22750%22 height=%22300%22><rect width=%22750%22 height=%22300%22 fill=%22%23e6dfd0%22/></svg>';
+      html += '<div class="p-card"><img src="' + esc(img) + '"><div class="b"><div class="t"><span>' + esc(c.en || '') + '</span></div><h4>' + esc(c.title) + '</h4><p>' + esc(c.desc || '') + '</p></div></div>';
+    });
+    html += '<div class="p-sec"><h4>底部行动区</h4><p>' + esc((d.home.actions || {}).title || '') + '<br>' + esc((d.home.actions || {}).phoneLabel || '') + ' ' + esc((d.home.actions || {}).phone || '') + ' / ' + esc((d.home.actions || {}).bookLabel || '') + '</p></div>';
+    html += '<div class="p-title">会场设施</div>';
+    d.venues.list.forEach(function(v){
+      var img = v.image ? v.image : 'data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22750%22 height=%22300%22><rect width=%22750%22 height=%22300%22 fill=%22%23e6dfd0%22/></svg>';
+      html += '<div class="p-card"><img src="' + esc(img) + '"><div class="b"><h4>' + esc(v.name) + ' · ' + esc(v.size) + '</h4><p>' + esc(v.desc) + '</p></div></div>';
+    });
+    var BLANK = 'data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22750%22 height=%22300%22><rect width=%22750%22 height=%22300%22 fill=%22%23e6dfd0%22/></svg>';
+    var poolPv = d.cases.imgs || [];
+    function pvImg(v){
+      if(v == null || v === '') return BLANK;
+      var n = parseInt(v, 10);
+      return isNaN(n) ? (typeof v === 'string' ? v : BLANK) : (poolPv[n] || BLANK);
+    }
+    html += '<div class="p-title">宴会案例（' + d.cases.list.length + ' 个分类）</div>';
+    d.cases.list.forEach(function(c){
+      html += '<div class="p-card"><img src="' + esc(pvImg(c.image)) + '"><div class="b">' +
+        '<div class="t">' + (c.tag ? '<span>' + esc(c.tag) + '</span>' : '') + '</div>' +
+        '<h4>' + esc(c.title) + '</h4><p>' + esc(c.desc || '') + '</p>' +
+        '<p style="margin-top:8px;opacity:.7;">含 ' + ((c.cases || []).length) + ' 个案例：' +
+        (c.cases || []).map(function(s){ return esc(s.title); }).join(' / ') + '</p></div></div>';
+    });
+    html += '<div class="p-title">联系信息</div>';
+    html += '<div class="p-sec">' + d.contact.items.map(function(it){
+      return '<h4>' + esc(it.title) + '</h4><p>' + it.lines.map(esc).join('<br>') + '</p>';
+    }).join('') + '</div>';
+    pv.innerHTML = html;
+    document.getElementById('preview').style.display = 'block';
+    document.body.style.overflow = 'hidden';
+  });
+  document.getElementById('btn-close').addEventListener('click', function(){
+    document.getElementById('preview').style.display = 'none';
+    document.body.style.overflow = '';
+  });
+
+  /* ---------- 载入线上最新 ---------- */
+  document.getElementById('btn-reload').addEventListener('click', function(){
+    if(!confirm('载入线上最新内容？当前页面未导出的修改会丢失。')) return;
+    fetch('site.json?v=' + Date.now())
+      .then(function(r){ if(!r.ok) throw 0; return r.json(); })
+      .then(function(d){ state = d; renderTabs(); renderEditor(); toast('已载入线上最新内容'); })
+      .catch(function(){ toast('载入失败，请刷新页面重试'); });
+  });
+
+  /* ---------- 初始化 ---------- */
+  fetch('site.json?v=' + Date.now())
+    .then(function(r){ if(!r.ok) throw 0; return r.json(); })
+    .then(function(d){
+      state = d;
+      renderTabs(); renderEditor();
+      toast('已加载线上内容，可直接编辑');
+    })
+    .catch(function(){
+      toast('未加载到 site.json，请点击「导入修改」选择文件');
+    });
+})();
+</script>
+</body>
+</html>
