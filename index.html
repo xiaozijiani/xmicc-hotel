@@ -88,10 +88,10 @@
   .hero-overlay::before{content:"";display:block;width:32px;height:1px;background:linear-gradient(to right,transparent,var(--gold-soft),transparent);margin:0 auto 22px;opacity:.85;}
   .hero-kicker{display:block;font-family:var(--sans);font-size:10px;letter-spacing:.42em;text-transform:uppercase;white-space:nowrap;
     color:var(--gold-soft);margin:0 0 18px;opacity:.92;}
-  .hero-title{font-family:var(--serif);font-size:clamp(24px,7vw,30px);font-weight:600;letter-spacing:.04em;line-height:1.25;
-    white-space:nowrap;margin:0;color:#fff;text-shadow:0 2px 24px rgba(8,16,28,.45);}
-  .hero-sub{display:block;font-family:var(--serif);font-size:13.5px;font-weight:400;margin-top:14px;
-    letter-spacing:.34em;white-space:nowrap;color:rgba(255,255,255,.9);}
+  .hero-title{font-family:var(--serif);font-size:clamp(22px,6.4vw,28px);font-weight:600;letter-spacing:.01em;line-height:1.3;
+    margin:0;color:#fff;text-shadow:0 2px 24px rgba(8,16,28,.45);}
+  .hero-sub{display:block;font-family:var(--serif);font-size:13px;font-weight:400;margin-top:12px;
+    letter-spacing:.2em;color:rgba(255,255,255,.9);}
   .hero-en{display:block;font-family:var(--sans);font-size:8.5px;letter-spacing:.26em;color:rgba(255,255,255,.55);margin-top:18px;
     text-transform:uppercase;}
 
@@ -394,7 +394,7 @@
 
   footer{padding:44px 26px 120px;background:var(--ink);color:rgba(255,255,255,.55);text-align:center;}
   footer .f-brand{font-family:var(--serif);font-size:16px;color:#fff;letter-spacing:.2em;}
-  footer .f-en{font-size:9px;letter-spacing:.18em;color:rgba(255,255,255,.35);margin-top:8px;text-transform:uppercase;}
+  footer .f-en{font-size:8.5px;letter-spacing:.12em;color:rgba(255,255,255,.35);margin-top:8px;text-transform:uppercase;white-space:nowrap;}
   footer .f-line{width:26px;height:1px;background:var(--gold);margin:20px auto;}
   footer p{font-size:11px;line-height:2;letter-spacing:.06em;}
 
@@ -630,9 +630,10 @@
   function renderSite(d){
     SITE = d;
     /* 顶栏 & 页脚 */
-    document.getElementById('tb-brand').textContent = d.footer.brand;
+    var footerBrand = currentLang === 'en' && d.footer.en ? d.footer.en : d.footer.brand;
+    document.getElementById('tb-brand').textContent = footerBrand;
     document.getElementById('ft').innerHTML =
-      '<div class="f-brand">' + esc(d.footer.brand) + '</div>' +
+      '<div class="f-brand">' + esc(footerBrand) + '</div>' +
       '<div class="f-en">' + esc(d.footer.en) + '</div>' +
       '<div class="f-line"></div><p>' + d.footer.lines.map(esc).join('<br>') + '</p>';
 
@@ -694,9 +695,16 @@
     renderHead(document.getElementById('v-head'), v);
     var vh = '';
     v.list.forEach(function(it, i){
-      vh += '<div class="venue-card reveal" data-vi="' + i + '"><div class="v-img"><img src="' + esc(it.image) + '" alt="' + esc(it.name) + '"><span class="v-tag">' + esc(it.tag) + '</span></div>' +
-        '<div class="v-body"><h3>' + esc(it.name) + ' <small>' + esc(it.size) + '</small></h3><p>' + esc(it.desc) + '</p>' +
-        '<div class="v-meta">' + (it.meta || []).map(function(m){ return '<span>' + esc(m) + '</span>'; }).join('') + '</div>' +
+      var isEn = currentLang === 'en';
+      var en = isEn && it.en ? it.en : {};
+      var name = en.name || it.name;
+      var tag = en.tag || it.tag;
+      var size = en.size || it.size;
+      var desc = en.desc || it.desc;
+      var meta = en.meta || it.meta || [];
+      vh += '<div class="venue-card reveal" data-vi="' + i + '"><div class="v-img"><img src="' + esc(it.image) + '" alt="' + esc(name) + '"><span class="v-tag">' + esc(tag) + '</span></div>' +
+        '<div class="v-body"><h3>' + esc(name) + ' <small>' + esc(size) + '</small></h3><p>' + esc(desc) + '</p>' +
+        '<div class="v-meta">' + meta.map(function(m){ return '<span>' + esc(m) + '</span>'; }).join('') + '</div>' +
         '<div class="v-more">' + UI_LABELS[currentLang].viewDetail + '<svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div></div></div>';
     });
     document.getElementById('v-list').innerHTML = vh;
@@ -707,28 +715,31 @@
       var it = v.list[i]; if(!it) return;
       document.getElementById('vd-sheet').classList.remove('romantic');
       document.getElementById('vd-sheet').classList.remove('cases');
+      var isEn = currentLang === 'en';
+      var en = isEn && it.en ? it.en : {};
       var rawImgs = (it.images && it.images.length) ? it.images : (it.image ? [it.image] : []);
       // 兼容两种格式：字符串 data URI，或 {image:'...'} 对象（后台导出/桌面文件常见）
       var imgs = rawImgs.map(function(x){ return (typeof x === 'string') ? x : (x && x.image) ? x.image : ''; }).filter(Boolean);
-      var detailText = it.detail || it.desc || '';
+      var detailText = en.detail || it.detail || en.desc || it.desc || '';
       // 头图：只放图（标题移到下方独立区）
       // 头图 = 封面图（it.image），与后台「列表封面 / 详情页头图」字段 1:1 对应
       var heroImg = (typeof it.image === 'string' && it.image) ? it.image : (imgs.length ? imgs[0] : '');
-      document.getElementById('vd-hero').innerHTML = '<img src="' + esc(heroImg) + '" alt="' + esc(it.name) + '">';
+      document.getElementById('vd-hero').innerHTML = '<img src="' + esc(heroImg) + '" alt="' + esc(en.name || it.name) + '">';
       // 标题区：标签 + 厅名 + 面积（紧贴头图下方，米色底与头图渐入融合）
-      var titleHtml = '<h2 class="vd-title-name">' + esc(it.name) + '</h2>';
+      var titleHtml = '<h2 class="vd-title-name">' + esc(en.name || it.name) + '</h2>';
       document.getElementById('vd-title-area').innerHTML = titleHtml;
 
       // 主体
       var html = '';
-      if(it.meta && it.meta.length){
-        html += '<div class="vd-tags">' + it.meta.map(function(m){ return '<span>' + esc(m) + '</span>'; }).join('') + '</div>';
+      var meta = en.meta || it.meta || [];
+      if(meta && meta.length){
+        html += '<div class="vd-tags">' + meta.map(function(m){ return '<span>' + esc(m) + '</span>'; }).join('') + '</div>';
       }
       // 两个统计方块：容纳人数 + 场地面积
       var capacity = it.capacity || '—';
       var area = it.size || '—';
       html += '<div class="vd-stats">' +
-        '<div class="vd-stat"><div class="ico"><svg viewBox="0 0 24 24"><path d="M16 11a4 4 0 1 0-8 0 4 4 0 0 0 8 0z"/><path d="M3 21c0-4 3-7 6-7s6 3 6 7"/></svg></div><div class="meta"><div class="num">' + esc(capacity) + '<em>人</em></div><div class="lab">' + UI_LABELS[currentLang].capacity + '</div></div></div>' +
+        '<div class="vd-stat"><div class="ico"><svg viewBox="0 0 24 24"><path d="M16 11a4 4 0 1 0-8 0 4 4 0 0 0 8 0z"/><path d="M3 21c0-4 3-7 6-7s6 3 6 7"/></svg></div><div class="meta"><div class="num">' + esc(capacity) + '<em>' + (currentLang === 'en' ? 'persons' : '人') + '</em></div><div class="lab">' + UI_LABELS[currentLang].capacity + '</div></div></div>' +
         '<div class="vd-stat"><div class="ico"><svg viewBox="0 0 24 24"><path d="M3 3h18v18H3z"/><path d="M3 9h18M9 21V9"/></svg></div><div class="meta"><div class="num">' + esc(area) + '</div><div class="lab">' + UI_LABELS[currentLang].area + '</div></div></div>' +
         '</div>';
       // 简介
@@ -761,25 +772,29 @@
     /* 婚礼婚宴详情（复用厅详情抽屉，浪漫基调） */
     function openWedding(i){
       var it = (w && w.list && w.list[i]); if(!it) return;
+      var isEn = currentLang === 'en';
+      var en = isEn && it.en ? it.en : {};
       var rawImgs = (it.images && it.images.length) ? it.images : (it.image ? [it.image] : []);
       var imgs = rawImgs.map(function(x){ return (typeof x === 'string') ? x : (x && x.image) ? x.image : ''; }).filter(Boolean);
-      var detailText = it.detail || it.desc || '';
+      var detailText = en.detail || it.detail || en.desc || it.desc || '';
+      var name = en.name || it.name;
       var heroImg = (typeof it.image === 'string' && it.image) ? it.image : (imgs.length ? imgs[0] : '');
       var sheet = document.getElementById('vd-sheet');
       sheet.classList.add('romantic');
-      document.getElementById('vd-hero').innerHTML = '<img src="' + esc(heroImg) + '" alt="' + esc(it.name) + '">';
+      document.getElementById('vd-hero').innerHTML = '<img src="' + esc(heroImg) + '" alt="' + esc(name) + '">';
       // 标题区：厅名（按用户要求去掉标签药丸，保持与会场一致）
-      var titleHtml = '<h2 class="vd-title-name">' + esc(it.name) + '</h2>';
+      var titleHtml = '<h2 class="vd-title-name">' + esc(name) + '</h2>';
       document.getElementById('vd-title-area').innerHTML = titleHtml;
       var html = '';
-      if(it.meta && it.meta.length){
-        html += '<div class="vd-tags">' + it.meta.map(function(m){ return '<span class="w-tag">' + esc(m) + '</span>'; }).join('') + '</div>';
+      var meta = en.meta || it.meta || [];
+      if(meta && meta.length){
+        html += '<div class="vd-tags">' + meta.map(function(m){ return '<span class="w-tag">' + esc(m) + '</span>'; }).join('') + '</div>';
       }
       html += '<div class="vd-gtitle">' + UI_LABELS[currentLang].weddingPlan + '</div><div class="vd-desc">' + esc(detailText) + '</div>';
       var gal = imgs.filter(function(g){ return g !== heroImg; });
       if(gal.length){
         html += '<div class="vd-gtitle" style="margin-top:32px;">' + UI_LABELS[currentLang].gallery + '</div><div class="vd-gallery">' +
-          gal.map(function(g){ return '<img src="' + esc(g) + '" alt="' + esc(it.name) + '">'; }).join('') + '</div>';
+          gal.map(function(g){ return '<img src="' + esc(g) + '" alt="' + esc(name) + '">'; }).join('') + '</div>';
       }
       document.getElementById('vd-body').innerHTML = html;
       vdOverlay.classList.add('open');
@@ -804,10 +819,15 @@
       renderIntro(document.getElementById('w-intro'), w.intro || {});
       var wh = '';
       (w.list || []).forEach(function(it, i){
-        wh += '<div class="wed-card reveal" data-wi="' + i + '"><div class="w-img">' + imgTag(it.image, it.name) + '</div>' +
+        var isEn = currentLang === 'en';
+        var en = isEn && it.en ? it.en : {};
+        var name = en.name || it.name;
+        var tag = en.tag || it.tag;
+        var desc = en.desc || it.desc;
+        wh += '<div class="wed-card reveal" data-wi="' + i + '"><div class="w-img">' + imgTag(it.image, name) + '</div>' +
           '<div class="w-body">' +
-            '<div class="w-head"><h3>' + esc(it.name) + '</h3>' + (it.tag ? '<span class="w-tag">' + esc(it.tag) + '</span>' : '') + '</div>' +
-            '<p>' + esc(it.desc) + '</p>' +
+            '<div class="w-head"><h3>' + esc(name) + '</h3>' + (tag ? '<span class="w-tag">' + esc(tag) + '</span>' : '') + '</div>' +
+            '<p>' + esc(desc) + '</p>' +
             '<div class="w-more">' + UI_LABELS[currentLang].viewPlan + '<svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>' +
           '</div></div>';
       });
@@ -820,7 +840,10 @@
     renderHead(document.getElementById('ct-head'), ct);
     var ch2 = '';
     ct.items.forEach(function(it){
-      var body = '<b>' + esc(it.title) + '</b><span>' + it.lines.map(esc).join('<br>') + '</span>';
+      var isEn = currentLang === 'en';
+      var title = isEn && it.en && it.en.title ? it.en.title : it.title;
+      var lines = isEn && it.en && it.en.lines ? it.en.lines : it.lines;
+      var body = '<b>' + esc(title) + '</b><span>' + lines.map(esc).join('<br>') + '</span>';
       if(it.tel){
         ch2 += '<a class="contact-item reveal ci-tel" href="tel:' + esc(it.tel) + '">' +
           '<div class="ci-icon">' + (ICONS[it.icon] || ICONS.addr) + '</div><div>' + body + '</div>' +
@@ -848,7 +871,7 @@
 
   function socialCard(kind, s){
     var imgSrc = kind === 'wechat' ? 'images/logo-wechat-square.jpg' : 'images/logo-redbook-square.jpg';
-    var label = kind === 'wechat' ? (currentLang === 'en' ? 'WeChat' : '公众号') : '小红书';
+    var label = kind === 'wechat' ? (currentLang === 'en' ? 'WeChat' : '公众号') : (currentLang === 'en' ? 'Redbook' : '小红书');
     var inner = '<div class="sc-ic"><img src="' + imgSrc + '" alt="' + esc(label) + '"></div><div class="sc-lb">' + esc(label) + '</div>';
     if(s.url){
       return '<a class="social-card social-' + kind + '" href="' + esc(s.url) + '" target="_blank" rel="noopener">' + inner + '</a>';
