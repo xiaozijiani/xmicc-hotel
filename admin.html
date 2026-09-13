@@ -764,7 +764,7 @@
   });
 
   /* ---------- 初始化 ---------- */
-  fetch('site.json?v=' + Date.now())
+  fetch('site-public.json?v=' + Date.now())
     .then(function(r){ if(!r.ok) throw 0; return r.json(); })
     .then(function(d){
       state = d;
