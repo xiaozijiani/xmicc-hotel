@@ -90,14 +90,25 @@
   /* 标题压图：底部居中叠在图片上 */
   .hero-overlay{position:absolute;left:0;right:0;bottom:0;z-index:3;padding:0 28px 56px;color:#fff;text-align:center;}
   .hero-overlay::before{content:"";display:block;width:32px;height:1px;background:linear-gradient(to right,transparent,var(--gold-soft),transparent);margin:0 auto 22px;opacity:.85;}
-  .hero-kicker{display:block;font-family:var(--sans);font-size:10px;letter-spacing:.42em;text-transform:uppercase;white-space:nowrap;
-    color:var(--gold-soft);margin:0 0 18px;opacity:.92;}
+  /* 注意：不要给 kicker 加 white-space:nowrap。英文 badge 有 41 个字符，
+     在 10px + .42em 字距下宽度约 438px，窄屏容器只有约 330~370px，会被 .hero-photo 的 overflow:hidden 裁掉右半截。
+     做法＝去掉 nowrap（一律换行、绝不截断）+ 随屏宽递减字号与字距（常见手机上仍保持单行）。 */
+  .hero-kicker{display:block;font-family:var(--sans);font-size:10px;letter-spacing:.42em;text-transform:uppercase;
+    color:var(--gold-soft);margin:0 0 18px;opacity:.92;text-wrap:balance;}
   .hero-title{font-family:var(--serif);font-size:clamp(22px,6.4vw,28px);font-weight:600;letter-spacing:.01em;line-height:1.3;
     margin:0;color:#fff;text-shadow:0 2px 24px rgba(8,16,28,.45);}
   .hero-sub{display:block;font-family:var(--serif);font-size:13px;font-weight:400;margin-top:12px;
     letter-spacing:.2em;color:rgba(255,255,255,.9);}
   .hero-en{display:block;font-family:var(--sans);font-size:8.5px;letter-spacing:.26em;color:rgba(255,255,255,.55);margin-top:18px;
-    text-transform:uppercase;}
+    text-transform:uppercase;text-wrap:balance;}
+  /* 窄屏收敛：让上面两行长英文仍能单行放下（降到 400px 时再收一档） */
+  @media (max-width:460px){
+    .hero-kicker{font-size:9.2px;letter-spacing:.24em;}
+    .hero-en{font-size:8.2px;letter-spacing:.2em;}
+  }
+  @media (max-width:400px){
+    .hero-kicker{font-size:8.8px;letter-spacing:.17em;}
+  }
 
   /* ---------- 通用区块 ---------- */
   section{padding:56px 24px;}
