@@ -5,12 +5,31 @@
 <!-- 允许缓存但每次协商验证：内容有更新才重传，否则只回 304（几百字节） -->
 <meta http-equiv="Cache-Control" content="no-cache, must-revalidate">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<!-- 站点资源包（图片直连映射 + 站点数据）直连阿里云上海：一次加载拿到全部，
-     省掉对 GitHub 的第二次请求。未收录的图片路径自动回落到本站，不会裂图 -->
-<script src="https://xmicc-hotel.oss-cn-shanghai.aliyuncs.com/_oss_assets.js?OSSAccessKeyId=LTAI5tAksu65GrVeckL9xa3u&amp;Expires=2051222400&amp;Signature=R8QLioEp3SEJSu5VgAMQlseHCWc%3D&amp;v=f349f13537"></script>
+<!-- 站点资源包（图片直连映射 + 站点数据）直连阿里云上海：一次加载拿到全部。
+     异步加载 + 8s 超时 + 数据校验三重防护：OSS 快速 403 / 返回错误体 / 连接挂起时，
+     全部自动回落到本站 site-public.json，且不阻塞首屏渲染（2026-09-14 欠费白屏事故加固） -->
+<script>
+(function(){
+  var OSS_URL = "https://xmicc-hotel.oss-cn-shanghai.aliyuncs.com/_oss_assets.js?OSSAccessKeyId=LTAI5tAksu65GrVeckL9xa3u&Expires=2051222400&Signature=R8QLioEp3SEJSu5VgAMQlseHCWc%3D&v=f349f13537";
+  function fallback(){ return fetch('site-public.json', {cache:'no-cache'}); }
+  window.__DATA__ = new Promise(function(resolve){
+    var done = false;
+    function finish(fn){ if(done) return; done = true; clearTimeout(timer); resolve(fn()); }
+    var timer = setTimeout(function(){ finish(fallback); }, 8000);
+    var s = document.createElement('script');
+    s.src = OSS_URL;
+    s.onload = function(){ finish(function(){
+      return window.__SITE_DATA__
+        ? {ok:true, json:function(){ return Promise.resolve(window.__SITE_DATA__); }}
+        : fallback(); /* 403 错误体执行失败，__SITE_DATA__ 未定义 → 回落 */
+    });};
+    s.onerror = function(){ finish(fallback); };
+    document.head.appendChild(s);
+  });
+})();
+</script>
 <!-- 首屏加速：主图尽早下载 -->
 <link rel="preload" as="image" href="https://xmicc-hotel.oss-cn-shanghai.aliyuncs.com/images/ef4fd5ce0c4d69eaed3a8cc9fdeff9b6.jpg?OSSAccessKeyId=LTAI5tAksu65GrVeckL9xa3u&amp;Expires=2051222400&amp;Signature=l30vuZBxZUMZ8%2FQptN19ju3ElWE%3D" fetchpriority="high">
-<script>try{window.__DATA__=window.__SITE_DATA__?Promise.resolve({ok:true,json:function(){return Promise.resolve(window.__SITE_DATA__);}}):fetch('site-public.json',{cache:'no-cache'});}catch(e){}</script>
 <title>厦门国际会议中心酒店 | XIAMEN INTERNATIONAL CONFERENCE CENTER HOTEL</title>
 <meta name="description" content="中国东南沿海超大型豪华会议宴会兼具滨海商务休闲度假酒店，2017金砖厦门会晤主场馆核心区酒店，雄踞环岛路，直面厦金海岸一线豪华海景。">
 <style>
