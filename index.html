@@ -2,11 +2,14 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<!-- 禁止浏览器/CDN 缓存本页，确保每次打开都是最新版本 -->
-<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-<meta http-equiv="Pragma" content="no-cache">
-<meta http-equiv="Expires" content="0">
+<!-- 允许缓存但每次协商验证：内容有更新才重传，否则只回 304（几百字节） -->
+<meta http-equiv="Cache-Control" content="no-cache, must-revalidate">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<!-- 图片直连阿里云上海：本表把 images/xxx.jpg 映射为国内直连地址；未收录的路径自动回落到本站 -->
+<script src="https://xmicc-hotel.oss-cn-shanghai.aliyuncs.com/_oss_imgmap.js?OSSAccessKeyId=LTAI5tAksu65GrVeckL9xa3u&amp;Expires=2051222400&amp;Signature=8yZx112ce6Kl0GkY3DRW2gi25NA%3D"></script>
+<!-- 首屏加速：主图与数据尽早并行下载，不再排队等 JS 解析 -->
+<link rel="preload" as="image" href="https://xmicc-hotel.oss-cn-shanghai.aliyuncs.com/images/7270236f9c02ba1d423da2afdadcbfe4.jpg?OSSAccessKeyId=LTAI5tAksu65GrVeckL9xa3u&amp;Expires=2051222400&amp;Signature=2TxRPOGa0bQlSnWdliG6bX9yJxc%3D" fetchpriority="high">
+<script>try{window.__DATA__=fetch('site-public.json',{cache:'no-cache'});}catch(e){}</script>
 <title>厦门国际会议中心酒店 | XIAMEN INTERNATIONAL CONFERENCE CENTER HOTEL</title>
 <meta name="description" content="中国东南沿海超大型豪华会议宴会兼具滨海商务休闲度假酒店，2017金砖厦门会晤主场馆核心区酒店，雄踞环岛路，直面厦金海岸一线豪华海景。">
 <style>
@@ -541,6 +544,13 @@
     return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
   }
 
+  /* 图片走国内：命中映射表则直连阿里云上海，未命中(或表未加载)自动回落到站点自身，永不裂图 */
+  function IMG(p){
+    if(typeof p !== 'string') return '';
+    if(/^https?:/i.test(p)) return p;
+    return (window.__OSS_IMG && window.__OSS_IMG[p]) || p;
+  }
+
   var SITE = null;
   var originalData = null;
   var currentLang = 'zh';
@@ -594,17 +604,16 @@
     if(typeof x === 'number' && SITE && SITE.cases && SITE.cases.imgs && SITE.cases.imgs[x]) return SITE.cases.imgs[x];
     return (typeof x === 'string') ? x : '';
   }
-  /* 拆库后图片为独立文件：手机取 _s 小图(1280)，桌面取全图(1920) */
-  function rsSmall(p){ return (typeof p === 'string' && p.indexOf('images/') === 0) ? p.replace(/(\.[^.]+)$/, '_s$1') : p; }
+  /* 图片统一由 IMG() 解析到国内直连地址。
+     注：原 _s 小图与全图同为 1280px、体积仅差 0.4%，手机端零收益，故取消 srcset 不再多传一份 */
   function imgTag(src, alt){
-    var s = esc(typeof src === 'string' ? src : '');
-    var small = esc(rsSmall(typeof src === 'string' ? src : ''));
-    return '<img src="' + s + '" srcset="' + small + ' 1280w, ' + s + ' 1920w" sizes="100vw" alt="' + esc(typeof alt === 'string' ? alt : '') + '" loading="lazy" onerror="this.classList.add(\'img-broken\')">';
+    var s = esc(IMG(src));
+    return '<img src="' + s + '" alt="' + esc(typeof alt === 'string' ? alt : '') + '" loading="lazy" onerror="this.classList.add(\'img-broken\')">';
   }
 
   /* ---------- 渲染函数 ---------- */
   function renderHead(el, d, opts){
-    el.innerHTML = '<img src="' + esc(d.headImage) + '" alt="' + esc(d.title) + '" onerror="this.classList.add(\'img-broken\')">' +
+    el.innerHTML = '<img src="' + esc(IMG(d.headImage)) + '" alt="' + esc(d.title) + '" onerror="this.classList.add(\'img-broken\')">' +
       '<div class="ph-inner"><div class="ph-kicker">' + esc(d.kicker) + '</div><h1>' + esc(d.title) + '</h1><div class="ph-en">' + esc(d.en) + '</div></div>';
   }
 
@@ -640,7 +649,7 @@
     /* 首页 */
     var h = d.home;
     document.getElementById('h-hero').innerHTML =
-      '<div class="hero-photo"><img src="' + esc(h.hero.image) + '" alt="' + esc(h.hero.title) + '" onerror="this.classList.add(\'img-broken\')">' +
+      '<div class="hero-photo"><img src="' + esc(IMG(h.hero.image)) + '" alt="' + esc(h.hero.title) + '" fetchpriority="high" decoding="async" onerror="this.classList.add(\'img-broken\')">' +
         '<div class="hero-overlay">' +
           '<div class="hero-kicker">' + esc(h.hero.badge) + '</div>' +
           '<h1 class="hero-title">' + esc(h.hero.title) + '</h1>' +
@@ -702,7 +711,7 @@
       var size = en.size || it.size;
       var desc = en.desc || it.desc;
       var meta = en.meta || it.meta || [];
-      vh += '<div class="venue-card reveal" data-vi="' + i + '"><div class="v-img"><img src="' + esc(it.image) + '" alt="' + esc(name) + '"><span class="v-tag">' + esc(tag) + '</span></div>' +
+      vh += '<div class="venue-card reveal" data-vi="' + i + '"><div class="v-img"><img src="' + esc(IMG(it.image)) + '" alt="' + esc(name) + '"><span class="v-tag">' + esc(tag) + '</span></div>' +
         '<div class="v-body"><h3>' + esc(name) + ' <small>' + esc(size) + '</small></h3><p>' + esc(desc) + '</p>' +
         '<div class="v-meta">' + meta.map(function(m){ return '<span>' + esc(m) + '</span>'; }).join('') + '</div>' +
         '<div class="v-more">' + UI_LABELS[currentLang].viewDetail + '<svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div></div></div>';
@@ -724,7 +733,7 @@
       // 头图：只放图（标题移到下方独立区）
       // 头图 = 封面图（it.image），与后台「列表封面 / 详情页头图」字段 1:1 对应
       var heroImg = (typeof it.image === 'string' && it.image) ? it.image : (imgs.length ? imgs[0] : '');
-      document.getElementById('vd-hero').innerHTML = '<img src="' + esc(heroImg) + '" alt="' + esc(en.name || it.name) + '">';
+      document.getElementById('vd-hero').innerHTML = '<img src="' + esc(IMG(heroImg)) + '" alt="' + esc(en.name || it.name) + '">';
       // 标题区：标签 + 厅名 + 面积（紧贴头图下方，米色底与头图渐入融合）
       var titleHtml = '<h2 class="vd-title-name">' + esc(en.name || it.name) + '</h2>';
       document.getElementById('vd-title-area').innerHTML = titleHtml;
@@ -748,7 +757,7 @@
       var gal = imgs.filter(function(g){ return g !== heroImg; });
       if(gal.length){
         html += '<div class="vd-gtitle" style="margin-top:32px;">' + UI_LABELS[currentLang].gallery + '</div><div class="vd-gallery">' +
-          gal.map(function(g){ return '<img src="' + esc(g) + '" alt="' + esc(it.name) + '">'; }).join('') +
+          gal.map(function(g){ return '<img src="' + esc(IMG(g)) + '" alt="' + esc(it.name) + '">'; }).join('') +
           '</div>';
       }
       document.getElementById('vd-body').innerHTML = html;
@@ -781,7 +790,7 @@
       var heroImg = (typeof it.image === 'string' && it.image) ? it.image : (imgs.length ? imgs[0] : '');
       var sheet = document.getElementById('vd-sheet');
       sheet.classList.add('romantic');
-      document.getElementById('vd-hero').innerHTML = '<img src="' + esc(heroImg) + '" alt="' + esc(name) + '">';
+      document.getElementById('vd-hero').innerHTML = '<img src="' + esc(IMG(heroImg)) + '" alt="' + esc(name) + '">';
       // 标题区：厅名（按用户要求去掉标签药丸，保持与会场一致）
       var titleHtml = '<h2 class="vd-title-name">' + esc(name) + '</h2>';
       document.getElementById('vd-title-area').innerHTML = titleHtml;
@@ -794,7 +803,7 @@
       var gal = imgs.filter(function(g){ return g !== heroImg; });
       if(gal.length){
         html += '<div class="vd-gtitle" style="margin-top:32px;">' + UI_LABELS[currentLang].gallery + '</div><div class="vd-gallery">' +
-          gal.map(function(g){ return '<img src="' + esc(g) + '" alt="' + esc(name) + '">'; }).join('') + '</div>';
+          gal.map(function(g){ return '<img src="' + esc(IMG(g)) + '" alt="' + esc(name) + '">'; }).join('') + '</div>';
       }
       document.getElementById('vd-body').innerHTML = html;
       vdOverlay.classList.add('open');
@@ -872,7 +881,7 @@
   function socialCard(kind, s){
     var imgSrc = kind === 'wechat' ? 'images/logo-wechat-square.jpg' : 'images/logo-redbook-square.jpg';
     var label = kind === 'wechat' ? (currentLang === 'en' ? 'WeChat' : '公众号') : (currentLang === 'en' ? 'Redbook' : '小红书');
-    var inner = '<div class="sc-ic"><img src="' + imgSrc + '" alt="' + esc(label) + '"></div><div class="sc-lb">' + esc(label) + '</div>';
+    var inner = '<div class="sc-ic"><img src="' + esc(IMG(imgSrc)) + '" alt="' + esc(label) + '"></div><div class="sc-lb">' + esc(label) + '</div>';
     if(s.url){
       return '<a class="social-card social-' + kind + '" href="' + esc(s.url) + '" target="_blank" rel="noopener">' + inner + '</a>';
     }
@@ -971,7 +980,8 @@
   });
 
   /* ---------- 数据加载 ---------- */
-  fetch('site-public.json?v=' + Date.now())
+  /* 复用 <head> 里已提前发起的请求，并走协商缓存（重复打开不再重传整个 json） */
+  (window.__DATA__ || fetch('site-public.json', {cache:'no-cache'}))
     .then(function(r){ if(!r.ok) throw 0; return r.json(); })
     .then(function(data){
       originalData = data;
