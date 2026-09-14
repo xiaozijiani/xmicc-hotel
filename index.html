@@ -28,6 +28,53 @@
   });
 })();
 </script>
+<!-- 百度统计 + 转化事件埋点（事件委托 + SPA 虚拟 PV；全部 try/catch，绝不影响页面功能） -->
+<script>
+var _hmt = _hmt || [];
+(function(){
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?c0aa4045a405ba372eff75fc383d2aed";
+  document.head.appendChild(hm);
+})();
+function TRK(cat, act, label){ try{ _hmt.push(['_trackEvent', cat, act, String(label || '')]); }catch(e){} }
+(function(){
+  var __curPage = 'home';
+  window.__curPage = function(){ return __curPage; };
+  document.addEventListener('click', function(e){
+    try{
+      var t = e.target && e.target.closest ? e.target.closest('a,button,[data-copy],[data-goto],[data-vi],[data-ci]') : null;
+      if(!t) return;
+      var href = t.getAttribute('href') || '';
+      if(href.indexOf('tel:') === 0) TRK('转化', '点击电话', href.slice(4));
+      else if(href.indexOf('xiaohongshu.com') > -1) TRK('转化', '小红书主页', '');
+      else if(href.indexOf('wechat.html') > -1) TRK('转化', '微信二维码页', '');
+      else if(t.hasAttribute('data-copy')) TRK('转化', '复制', t.getAttribute('data-copy'));
+      else if(t.hasAttribute('data-goto')) TRK('浏览', '进入板块', t.getAttribute('data-goto'));
+      else if(t.classList.contains('tab')) TRK('浏览', '切板块', t.getAttribute('data-page'));
+      else if(t.hasAttribute('data-vi')) TRK('浏览', '看场地', t.getAttribute('data-vi'));
+      else if(t.hasAttribute('data-ci')) TRK('浏览', '看案例', t.getAttribute('data-ci'));
+    }catch(err){}
+  }, true);
+  /* SPA 无刷新切页：盯 .page 的 active 变化记虚拟 PV */
+  function watch(){
+    var pages = document.querySelectorAll('.page');
+    if(!pages.length){ setTimeout(watch, 300); return; }
+    var mo = new MutationObserver(function(){
+      for(var i = 0; i < pages.length; i++){
+        if(pages[i].classList.contains('active')){
+          var p = pages[i].id.replace('page-', '');
+          if(p !== __curPage){
+            __curPage = p;
+            try{ _hmt.push(['_trackPageview', location.pathname + '#' + p]); }catch(e){}
+          }
+        }
+      }
+    });
+    for(var j = 0; j < pages.length; j++) mo.observe(pages[j], {attributes: true, attributeFilter: ['class']});
+  }
+  watch();
+})();
+</script>
 <!-- 首屏加速：主图尽早下载 -->
 <link rel="preload" as="image" href="https://xmicc-hotel.oss-cn-shanghai.aliyuncs.com/images/ef4fd5ce0c4d69eaed3a8cc9fdeff9b6.jpg?OSSAccessKeyId=LTAI5tAksu65GrVeckL9xa3u&amp;Expires=2051222400&amp;Signature=l30vuZBxZUMZ8%2FQptN19ju3ElWE%3D" fetchpriority="high">
 <title>厦门国际会议中心酒店 | XIAMEN INTERNATIONAL CONFERENCE CENTER HOTEL</title>
