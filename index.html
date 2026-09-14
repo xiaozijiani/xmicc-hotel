@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <!-- 站点资源包（图片直连映射 + 站点数据）直连阿里云上海：一次加载拿到全部，
      省掉对 GitHub 的第二次请求。未收录的图片路径自动回落到本站，不会裂图 -->
-<script src="https://xmicc-hotel.oss-cn-shanghai.aliyuncs.com/_oss_assets.js?OSSAccessKeyId=LTAI5tAksu65GrVeckL9xa3u&amp;Expires=2051222400&amp;Signature=R8QLioEp3SEJSu5VgAMQlseHCWc%3D&amp;v=10792075f2"></script>
+<script src="https://xmicc-hotel.oss-cn-shanghai.aliyuncs.com/_oss_assets.js?OSSAccessKeyId=LTAI5tAksu65GrVeckL9xa3u&amp;Expires=2051222400&amp;Signature=R8QLioEp3SEJSu5VgAMQlseHCWc%3D&amp;v=4d31153ee9"></script>
 <!-- 首屏加速：主图尽早下载 -->
 <link rel="preload" as="image" href="https://xmicc-hotel.oss-cn-shanghai.aliyuncs.com/images/ef4fd5ce0c4d69eaed3a8cc9fdeff9b6.jpg?OSSAccessKeyId=LTAI5tAksu65GrVeckL9xa3u&amp;Expires=2051222400&amp;Signature=l30vuZBxZUMZ8%2FQptN19ju3ElWE%3D" fetchpriority="high">
 <script>try{window.__DATA__=window.__SITE_DATA__?Promise.resolve({ok:true,json:function(){return Promise.resolve(window.__SITE_DATA__);}}):fetch('site-public.json',{cache:'no-cache'});}catch(e){}</script>
@@ -396,7 +396,22 @@
   .social-card .sc-ic{width:64px;height:64px;border-radius:16px;overflow:hidden;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 16px rgba(0,0,0,.08);}
   .social-card .sc-ic img{width:64px;height:64px;object-fit:cover;display:block;}
   .social-card .sc-lb{font-size:12px;color:var(--text);letter-spacing:.04em;}
-  .social-follow{font-size:13px;color:var(--text);letter-spacing:.05em;margin-top:20px;}
+  /* 小红书号：链接在微信里常被拦，留一个「点一下复制号」的兜底入口，不依赖跳转。
+     实测容器可用宽只有 ~203px(390屏) / ~133px(320屏)，而「标签+号码+提示」单行要 245~294px，
+     横排必然换行且会把「小红书号」拆成「小红/书号」。故改为标签在上、号码在下的两行胶囊：
+     宽度只由号码(~87px)+内边距决定 ≈125px，320px 屏也放得下，永不折断。 */
+  .social-id{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
+    max-width:100%;margin-top:20px;padding:10px 18px;border-radius:999px;
+    background:rgba(201,165,106,.1);border:1px solid rgba(201,165,106,.45);color:var(--ink);
+    font-family:var(--sans);cursor:pointer;transition:transform .2s,background .2s;}
+  .social-id:active{transform:scale(.96);background:rgba(201,165,106,.2);}
+  .social-id .si-k{white-space:nowrap;color:var(--gold);font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;}
+  .social-id b{white-space:nowrap;font-weight:600;font-size:12.5px;letter-spacing:.04em;font-variant-numeric:tabular-nums;}
+  @media (max-width:340px){
+    .social-id{padding:9px 13px;}
+    .social-id b{font-size:12px;letter-spacing:.02em;}
+  }
+  .social-follow{font-size:13px;color:var(--text);letter-spacing:.05em;margin-top:12px;}
   .social-follow b{color:var(--ink);font-weight:600;}
   .toast{
     position:fixed;bottom:118px;left:50%;transform:translateX(-50%) translateY(20px);
@@ -881,7 +896,18 @@
       var soc = '<div class="social-band reveal"><div class="sb-title">' + (currentLang === 'en' ? 'Follow Us' : '关注我们') + '</div><div class="sb-sub">FOLLOW US</div><div class="social-row">';
       if(so.wechat){ soc += socialCard('wechat', so.wechat); }
       if(so.redbook){ soc += socialCard('redbook', so.redbook); }
-      soc += '</div><div class="social-follow">' + (currentLang === 'en' ? 'Follow us for more event ideas' : '点击关注，获取更多方案') + '</div></div>';
+      soc += '</div>';
+      if(so.redbook && so.redbook.redId){
+        soc += '<button type="button" class="social-id" data-copy="' + esc(so.redbook.redId) + '"'
+             + ' data-copy-msg="' + esc(currentLang === 'en'
+                 ? 'Redbook ID copied — search it in the app'
+                 : '已复制小红书号，打开小红书搜索即可找到我们') + '">'
+             + '<span class="si-k">' + (currentLang === 'en' ? 'Redbook ID' : '小红书号') + '</span>'
+             + '<b>' + esc(so.redbook.redId) + '</b></button>';
+      }
+      soc += '<div class="social-follow">' + (currentLang === 'en'
+               ? 'Tap the ID to copy · Follow us for more event ideas'
+               : '点号码可复制 · 关注我们获取更多方案') + '</div></div>';
       document.getElementById('ct-form').innerHTML = soc;
     }else{
       document.getElementById('ct-form').innerHTML = '';
@@ -897,7 +923,8 @@
     if(s.url){
       return '<a class="social-card social-' + kind + '" href="' + esc(s.url) + '" target="_blank" rel="noopener">' + inner + '</a>';
     }
-    return '<div class="social-card social-' + kind + '" data-search="' + esc(s.search) + '">' + inner + '</div>';
+    return '<div class="social-card social-' + kind + '" data-copy="' + esc(s.search) + '"'
+         + ' data-copy-msg="' + esc(currentLang === 'en' ? 'Search term copied' : '已复制搜索词：' + s.search) + '">' + inner + '</div>';
   }
 
   /* ---------- 案例页 · 三级渲染（封面卡 → 子案例 → 详情抽屉） ---------- */
@@ -979,16 +1006,19 @@
     if(e.target.closest('.crumb-btn')){ renderCasesL1(); }
   });
 
-  /* 关注卡片：未配 URL 时点击复制搜索词 */
+  /* 关注块：点「小红书号」或未配 URL 的卡片 → 复制文本到剪贴板 */
   document.getElementById('ct-form').addEventListener('click', function(e){
-    var sc = e.target.closest('.social-card[data-search]');
-    if(!sc) return;
-    var txt = sc.getAttribute('data-search');
+    var el = e.target.closest('[data-copy]');
+    if(!el) return;
+    var txt = el.getAttribute('data-copy');
+    if(!txt) return;
+    var msg = el.getAttribute('data-copy-msg') || ('已复制：' + txt);
+    var fallback = function(){ toast('请手动记下：' + txt); };
     try{
       if(navigator.clipboard && navigator.clipboard.writeText){
-        navigator.clipboard.writeText(txt).then(function(){ toast('已复制搜索词：' + txt); }, function(){ toast('请搜索：' + txt); });
-      }else{ toast('请搜索：' + txt); }
-    }catch(err){ toast('请搜索：' + txt); }
+        navigator.clipboard.writeText(txt).then(function(){ toast(msg); }, fallback);
+      }else{ fallback(); }
+    }catch(err){ fallback(); }
   });
 
   /* ---------- 数据加载 ---------- */
