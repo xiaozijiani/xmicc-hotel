@@ -5,11 +5,12 @@
 <!-- 允许缓存但每次协商验证：内容有更新才重传，否则只回 304（几百字节） -->
 <meta http-equiv="Cache-Control" content="no-cache, must-revalidate">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<!-- 图片直连阿里云上海：本表把 images/xxx.jpg 映射为国内直连地址；未收录的路径自动回落到本站 -->
-<script src="https://xmicc-hotel.oss-cn-shanghai.aliyuncs.com/_oss_imgmap.js?OSSAccessKeyId=LTAI5tAksu65GrVeckL9xa3u&amp;Expires=2051222400&amp;Signature=8yZx112ce6Kl0GkY3DRW2gi25NA%3D"></script>
-<!-- 首屏加速：主图与数据尽早并行下载，不再排队等 JS 解析 -->
+<!-- 站点资源包（图片直连映射 + 站点数据）直连阿里云上海：一次加载拿到全部，
+     省掉对 GitHub 的第二次请求。未收录的图片路径自动回落到本站，不会裂图 -->
+<script src="https://xmicc-hotel.oss-cn-shanghai.aliyuncs.com/_oss_assets.js?OSSAccessKeyId=LTAI5tAksu65GrVeckL9xa3u&amp;Expires=2051222400&amp;Signature=R8QLioEp3SEJSu5VgAMQlseHCWc%3D&amp;v=729da433a0"></script>
+<!-- 首屏加速：主图尽早下载 -->
 <link rel="preload" as="image" href="https://xmicc-hotel.oss-cn-shanghai.aliyuncs.com/images/7270236f9c02ba1d423da2afdadcbfe4.jpg?OSSAccessKeyId=LTAI5tAksu65GrVeckL9xa3u&amp;Expires=2051222400&amp;Signature=2TxRPOGa0bQlSnWdliG6bX9yJxc%3D" fetchpriority="high">
-<script>try{window.__DATA__=fetch('site-public.json',{cache:'no-cache'});}catch(e){}</script>
+<script>try{window.__DATA__=window.__SITE_DATA__?Promise.resolve({ok:true,json:function(){return Promise.resolve(window.__SITE_DATA__);}}):fetch('site-public.json',{cache:'no-cache'});}catch(e){}</script>
 <title>厦门国际会议中心酒店 | XIAMEN INTERNATIONAL CONFERENCE CENTER HOTEL</title>
 <meta name="description" content="中国东南沿海超大型豪华会议宴会兼具滨海商务休闲度假酒店，2017金砖厦门会晤主场馆核心区酒店，雄踞环岛路，直面厦金海岸一线豪华海景。">
 <style>
