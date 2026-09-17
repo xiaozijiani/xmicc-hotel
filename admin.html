@@ -81,6 +81,39 @@
   .p-sec{background:#fff;border-radius:16px;padding:16px;margin-bottom:14px;}
   .p-sec h4{font-family:var(--serif);font-size:14px;color:#0d1b2a;letter-spacing:.08em;margin-bottom:8px;}
   .p-sec p{font-size:12px;color:var(--text-soft);line-height:1.9;}
+  /* ---------- 英文版 ---------- */
+  .en-chips{display:flex;gap:7px;flex-wrap:wrap;}
+  .en-chip{font-size:11px;padding:6px 12px;border-radius:999px;border:1px solid rgba(13,27,42,.12);background:var(--white);color:var(--text-soft);letter-spacing:.04em;display:inline-block;text-decoration:none;}
+  a.en-chip{color:var(--gold);border-color:rgba(201,165,106,.45);}
+  .en-chip.ok{color:#2e7d5b;border-color:rgba(46,125,91,.35);background:#eff7f3;}
+  .en-chip.warn{color:#a8761f;border-color:rgba(201,165,106,.6);background:#fdf6e8;}
+  .en-chip.bad{color:var(--danger);border-color:rgba(192,86,79,.4);background:#fdf0ef;}
+  .en-item{padding:13px 0;border-top:1px solid rgba(13,27,42,.07);}
+  .en-item:first-child{border-top:none;padding-top:0;}
+  .en-item .hd{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:3px;}
+  .en-item .hd .lb{font-size:12px;color:var(--ink);letter-spacing:.06em;font-weight:600;}
+  .en-item .hd .pt{font-size:9.5px;color:#b3aca0;word-break:break-all;text-align:right;flex:none;max-width:52%;}
+  .en-item .where{font-size:10px;color:var(--gold);letter-spacing:.1em;margin-bottom:7px;}
+  .en-cn{font-size:11.5px;color:var(--text-soft);line-height:1.85;background:#f7f5f0;border-left:2px solid rgba(201,165,106,.45);border-radius:0 8px 8px 0;padding:8px 11px;margin-bottom:8px;white-space:pre-wrap;word-break:break-word;}
+  .en-cn.empty{color:#b9b2a6;font-style:italic;}
+  .en-item input,.en-item textarea{width:100%;padding:9px 11px;border:1px solid #e5e0d6;border-radius:10px;font-size:13px;color:var(--ink);background:#fdfcfa;outline:none;font-family:var(--sans);transition:border .2s,background .2s;}
+  .en-item input:focus,.en-item textarea:focus{border-color:var(--gold);}
+  .en-item textarea{resize:vertical;min-height:56px;line-height:1.7;}
+  .en-item.miss input,.en-item.miss textarea{border-color:rgba(201,165,106,.8);background:#fffdf8;}
+  .en-item.cjk input,.en-item.cjk textarea{border-color:rgba(192,86,79,.55);background:#fffafa;}
+  .en-flags{display:flex;gap:5px;flex:none;}
+  .en-flag{font-size:10px;letter-spacing:.06em;padding:2px 8px;border-radius:999px;white-space:nowrap;font-weight:400;}
+  .en-flag.miss{background:#fdf6e8;color:#a8761f;border:1px solid rgba(201,165,106,.6);}
+  .en-flag.cjk{background:#fdf0ef;color:var(--danger);border:1px solid rgba(192,86,79,.4);}
+  .en-warn-box{background:#fffdf6;border:1px solid rgba(201,165,106,.5);border-radius:12px;padding:12px 14px;margin-bottom:14px;font-size:11.5px;line-height:1.9;color:var(--text);}
+  .en-warn-box b{color:#a8761f;}
+  .en-warn-box ul{margin:6px 0 0 17px;}
+  .en-warn-box .fix{margin-top:9px;}
+  .en-sec-label{font-family:var(--serif);font-size:13px;color:var(--ink);letter-spacing:.14em;margin:20px 0 10px;display:flex;align-items:center;gap:9px;}
+  .en-sec-label::before{content:"";width:16px;height:1px;background:var(--gold);}
+  .en-sec-label .n{margin-left:auto;font-family:var(--sans);font-size:10.5px;color:var(--text-soft);letter-spacing:.04em;}
+  .en-report{background:#fff;border-radius:16px;padding:16px;font-size:12px;line-height:1.95;color:var(--text);white-space:pre-wrap;word-break:break-word;font-family:var(--sans);}
+  .en-report .h{font-family:var(--serif);color:var(--ink);letter-spacing:.08em;}
 </style>
 </head>
 <body>
@@ -102,7 +135,8 @@
     <div class="hint">
       <b>使用说明：</b>① 上方页签切换到要改的页面；② 直接修改文字、点击「选择图片」上传新图；③ 列表类内容可增删排序；④ 全部改完点「导出 site.json」，把文件发给助手即可上线。<br>
       <b>会场设施图片规则：</b>每个厅有 <b>「卡片封面图」</b>（用于列表缩略 & 详情页头图，<u>独立一张，不取自图集</u>）和 <b>「图集图片」</b>（详情页简介下方滚动展示，最多可加多张）。两者互不相同，改封面不会影响图集。<br>
-      <b>如果看到旧内容：</b>点「载入线上最新」可拉取服务器当前真实数据（会丢弃本页未导出的修改）。
+      <b>如果看到旧内容：</b>点「载入线上最新」可拉取服务器当前真实数据（会丢弃本页未导出的修改）。<br>
+      <b>英文版：</b>右上「英文版」页签可逐条对照修改英文。图片、图集、案例编号这些<b>和语言无关的内容会自动同步</b>，不用管；导出前系统会给出「待同步清单」，照着填或直接发给助手即可。
     </div>
     <div id="editor"></div>
   </div>
@@ -484,6 +518,7 @@
   }
 
   function renderEditor(){
+    if(curTab === 'en'){ renderEnEditor(); return; }
     var sec = SECTIONS.filter(function(s){ return s.id === curTab; })[0];
     var html = '';
     var inPanel = false;
@@ -502,21 +537,47 @@
     editorEl.innerHTML = html;
   }
 
+  function tabList(){
+    var t = SECTIONS.map(function(s){ return {id:s.id, label:s.label}; });
+    t.push({id:'en', label:'英文版'});
+    return t;
+  }
+  function tabLabel(tab){
+    if(tab.id !== 'en') return tab.label;
+    if(!isObj(state) || !isObj(state.en)) return '英文版 ⚠';
+    var n = auditCount(auditEn());
+    return n ? ('英文版 ⚠' + n) : '英文版 ✓';
+  }
   function renderTabs(){
     var t = document.getElementById('tabs');
     t.innerHTML = '';
-    SECTIONS.forEach(function(s){
+    tabList().forEach(function(s){
       var b = document.createElement('button');
       b.className = 'tab' + (s.id === curTab ? ' on' : '');
-      b.textContent = s.label;
+      b.textContent = tabLabel(s);
       b.addEventListener('click', function(){ curTab = s.id; renderTabs(); renderEditor(); window.scrollTo(0, 0); });
       t.appendChild(b);
     });
   }
 
   /* ---------- 事件绑定 ---------- */
+  function refreshEnFlags(el){
+    var box = el.closest ? el.closest('.en-item') : null;
+    if(!box) return;
+    var miss = !el.value.trim() && el.dataset.cnhas === '1', bad = CJK_RE.test(el.value);
+    box.classList.toggle('miss', miss); box.classList.toggle('cjk', bad);
+    var fl = box.querySelector('.en-flags');
+    if(fl) fl.innerHTML = (miss ? '<span class="en-flag miss">英文空缺</span>' : '') + (bad ? '<span class="en-flag cjk">含中文</span>' : '');
+  }
   editorEl.addEventListener('input', function(e){
-    var t = e.target, path = t.dataset.path;
+    var t = e.target;
+    /* 英文版字段 */
+    if(t.dataset && t.dataset.enpath !== undefined){
+      setPE(t.dataset.enpath, t.dataset.type === 'lines' ? t.value.split('\n') : t.value);
+      refreshEnFlags(t);
+      return;
+    }
+    var path = t.dataset.path;
     if(!path) return;
     var type = t.dataset.type;
     if(type === 'lines'){ setP(path, t.value.split('\n').map(function(s){ return s; })); }
@@ -525,6 +586,11 @@
     else { setP(path, t.value); }
     var prev = editorEl.querySelector('[data-prev="' + path + '"]');
     if(prev && !t.dataset.img && t.value.indexOf('data:') === 0){ prev.src = t.value; }
+  });
+
+  /* 离开英文输入框时刷新页签角标 */
+  editorEl.addEventListener('focusout', function(e){
+    if(e.target.dataset && e.target.dataset.enpath !== undefined) renderTabs();
   });
 
   editorEl.addEventListener('change', function(e){
@@ -663,31 +729,468 @@
     renderEditor();
   });
 
+  /* =================================================================
+     英文版（i18n）保护
+     ① 语言无关字段自动镜像（图片/图集/编号/跳转/电话坐标）
+     ② 结构对齐 + 空缺 + 含中文 + 数字一致性  体检
+     ③ 英文逐条编辑（中英对照）
+     ④ 本机浏览器缓存兜底，导入旧文件不再丢英文
+     ================================================================= */
+  var EN_CACHE_KEY = 'xmicc_en_cache_v1';
+  var CJK_RE = /[\u3400-\u9fff]/;
+  var EN_ORDER = ['home','about','venues','cases','weddings','contact','footer'];
+
+  /* ① 语言无关字段：中英必须完全一致，导出前自动从中文侧覆盖过去。[] = 按索引对齐的数组层 */
+  var MIRROR = [
+    'home.hero.image','home.hero.kicker','home.hero.en',
+    'home.brand.goto',
+    'home.cards[].image','home.cards[].en','home.cards[].goto',
+    'home.highlights.stats[].num',
+    'home.actions.phone',
+    'about.headImage','about.kicker','about.en','about.cta.goto',
+    'about.stats[].num',
+    'venues.headImage','venues.kicker','venues.en','venues.cta.goto',
+    'venues.list[].image','venues.list[].images',
+    'venues.svc.items[].icon',
+    'cases.headImage','cases.kicker','cases.en','cases.cta.goto',
+    'cases.imgs',
+    'cases.list[].id','cases.list[].image','cases.list[].en',
+    'cases.list[].cases[].id','cases.list[].cases[].cover','cases.list[].cases[].images',
+    'weddings.headImage','weddings.kicker','weddings.en','weddings.cta.goto',
+    'weddings.list[].image','weddings.list[].images',
+    'contact.headImage','contact.kicker','contact.en',
+    'contact.geo','contact.items[].icon','contact.items[].tel',
+    'contact.social.wechat.url','contact.social.redbook.url',
+    'footer.en'
+  ];
+  function normPath(p){ return p.replace(/\[\]/g, '.[]').replace(/\.\d+(?=\.|$)/g, '.[]'); }
+  var MIRROR_SET = {};
+  MIRROR.forEach(function(p){ MIRROR_SET[normPath(p)] = 1; });
+  function isMirror(cnPath){ return MIRROR_SET[normPath(cnPath)] === 1; }
+
+  /* 结构对齐清单（对象数组那一层；字符串数组由字段级检查覆盖） */
+  var CHECK_LISTS = [
+    {p:'home.cards', n:'首页导航卡片'},
+    {p:'home.highlights.stats', n:'首页亮点数字'},
+    {p:'about.stats', n:'品牌简介数据'},
+    {p:'about.locs', n:'区位优势'},
+    {p:'venues.list', n:'场馆'},
+    {p:'venues.svc.items', n:'宴会服务条目'},
+    {p:'weddings.list', n:'婚礼方案'},
+    {p:'cases.list', n:'案例分类'},
+    {p:'contact.items', n:'联系信息'}
+  ];
+  /* 数字一致性抽查（面积/人数这类数值不该中英打架；㎡ 与 sqm 之类的单位差异不会误报） */
+  var NUMERIC_PATHS = [
+    {p:'venues.list[].capacity', n:'场馆最大容纳人数'},
+    {p:'venues.list[].size', n:'场馆面积'},
+    {p:'weddings.list[].capacity', n:'婚礼场地容纳人数'},
+    {p:'about.stats[].num', n:'品牌简介数据'},
+    {p:'home.highlights.stats[].num', n:'首页亮点数据'}
+  ];
+  var SEC_NAME = {home:'首页',about:'品牌简介',venues:'会场设施',cases:'宴会案例',weddings:'婚礼婚宴',contact:'联系我们',footer:'页脚'};
+  var K_LABEL = {title:'标题',desc:'描述',detail:'详情',tag:'标签',name:'名称',meta:'特性标签',
+    subtitle:'副题',sub:'副标题',btn:'按钮文字',label:'标签',quote:'金句',paras:'段落',
+    lines:'内容',badge:'徽章文字',more:'按钮文字',unit:'单位',size:'面积',capacity:'最大容纳人数',
+    no:'序号',search:'账号 / 搜索名',brand:'品牌名',phoneLabel:'电话按钮文字',bookLabel:'预约按钮文字',
+    note:'底部小字',phone:'电话号码',geo:'经纬度'};
+
+  function clone(o){ return o == null ? o : JSON.parse(JSON.stringify(o)); }
+  function isObj(o){ return !!o && typeof o === 'object' && !Array.isArray(o); }
+  function setPE(path, v){
+    var ks = path.split('.'), t = state;
+    for(var i = 0; i < ks.length - 1; i++){
+      var k = ks[i];
+      if(t[k] == null) t[k] = /^\d+$/.test(ks[i + 1]) ? [] : {};
+      t = t[k];
+    }
+    t[ks[ks.length - 1]] = v;
+  }
+  function digitSig(v){ var m = String(v == null ? '' : v).match(/\d+/g); return m ? m.join('|') : ''; }
+
+  /* 空值保护：不用中文侧的空值去覆盖英文侧已有的内容 */
+  function safeToWrite(nv, ev){
+    if(nv === undefined || nv === null) return false;
+    if(nv === '' && ev !== undefined && ev !== null && ev !== '') return false;
+    if(Array.isArray(nv) && !nv.length && Array.isArray(ev) && ev.length) return false;
+    return true;
+  }
+  function mirrorOne(pat, log){
+    var segs = pat.split('.');
+    function rec(c, e, i){
+      if(!isObj(c) || !isObj(e)) return;
+      var seg = segs[i], arr = seg.slice(-2) === '[]', k = arr ? seg.slice(0, -2) : seg, last = (i === segs.length - 1);
+      if(arr){
+        if(!Array.isArray(c[k])) return;
+        if(!Array.isArray(e[k])) e[k] = [];
+        var n = Math.min(c[k].length, e[k].length);
+        for(var j = 0; j < n; j++) rec(c[k][j], e[k][j], i + 1);
+      }else if(last){
+        if(!safeToWrite(c[k], e[k])) return;
+        e[k] = clone(c[k]); log.n++;
+      }else{
+        if(!isObj(c[k])) return;
+        if(!isObj(e[k])) e[k] = {};
+        rec(c[k], e[k], i + 1);
+      }
+    }
+    rec(state, state.en, 0);
+  }
+  function mirrorAll(){
+    if(!isObj(state)) return {n:0};
+    if(!isObj(state.en)) state.en = {};
+    var log = {n:0};
+    MIRROR.forEach(function(p){ try{ mirrorOne(p, log); }catch(err){} });
+    return log;
+  }
+
+  /* 沿模板展开中英对齐的取值对 */
+  function expandPairs(pat){
+    var segs = pat.split('.'), out = [];
+    function rec(c, e, i, p){
+      if(!isObj(c) || !isObj(e)) return;
+      var seg = segs[i], arr = seg.slice(-2) === '[]', k = arr ? seg.slice(0, -2) : seg, last = (i === segs.length - 1);
+      if(arr){
+        if(!Array.isArray(c[k]) || !Array.isArray(e[k])) return;
+        var n = Math.min(c[k].length, e[k].length);
+        for(var j = 0; j < n; j++) rec(c[k][j], e[k][j], i + 1, p + '.' + k + '.' + j);
+      }else if(last){
+        out.push({p:(p ? p + '.' : '') + k, cn:c[k], en:e[k]});
+      }else{
+        rec(c[k], e[k], i + 1, (p ? p + '.' : '') + k);
+      }
+    }
+    rec(state, state.en, 0, '');
+    return out;
+  }
+
+  /* ③ 英文可编辑字段清单（自动从数据结构推导，中文侧改结构也不用改代码） */
+  function fieldWhere(cnPath){
+    var parts = cnPath.split('.'), anchor = '', ai = -1;
+    for(var i = 0; i < parts.length; i++){ if(/^\d+$/.test(parts[i])){ anchor = parts.slice(0, i + 1).join('.'); ai = i; } }
+    var s = SEC_NAME[parts[0]] || parts[0];
+    if(anchor){
+      var it = getP(anchor), nm = it && (it.title || it.name);
+      s += ' › ' + (nm || ('第 ' + (parseInt(parts[ai], 10) + 1) + ' 项'));
+    }
+    return s;
+  }
+  function mkField(cnPath, cv, ev){
+    var isArr = Array.isArray(cv);
+    var cnArr = isArr ? cv.map(function(x){ return x == null ? '' : String(x); }) : null;
+    var enArr = Array.isArray(ev) ? ev.map(function(x){ return x == null ? '' : String(x); }) : null;
+    var tail = cnPath.split('.').pop();
+    var cnTxt = isArr ? cnArr.join('\n') : (cv == null ? '' : String(cv));
+    var enTxt = isArr ? (enArr ? enArr.join('\n') : '') : (ev == null ? '' : String(ev));
+    return {
+      cnPath: cnPath, path: 'en.' + cnPath,
+      label: K_LABEL[tail] || tail, where: fieldWhere(cnPath),
+      type: isArr ? 'lines' : (cnTxt.length > 60 ? 'textarea' : 'text'),
+      cn: cnTxt, en: enTxt, arr: isArr,
+      cnLen: isArr ? cnArr.length : 0, enLen: isArr ? (enArr ? enArr.length : -1) : 0
+    };
+  }
+  function enFields(){
+    var out = [];
+    (function walk(c, e, path){
+      if(!isObj(c)) return;
+      for(var k in c){
+        if(!c.hasOwnProperty(k) || k === 'en') continue;
+        if(!path && k === 'updatedAt') continue;
+        var cp = path ? path + '.' + k : k;
+        if(isMirror(cp)) continue;
+        var cv = c[k], ev = isObj(e) ? e[k] : undefined;
+        if(isObj(cv)){ walk(cv, isObj(ev) ? ev : undefined, cp); continue; }
+        if(Array.isArray(cv)){
+          if(cv.length && isObj(cv[0])){
+            for(var i = 0; i < cv.length; i++){
+              walk(cv[i], (Array.isArray(ev) && isObj(ev[i])) ? ev[i] : undefined, cp + '.' + i);
+            }
+          }else{
+            out.push(mkField(cp, cv, ev));
+          }
+          continue;
+        }
+        out.push(mkField(cp, cv, ev));
+      }
+    })(state, state.en, '');
+    return out;
+  }
+
+  /* ② 体检 */
+  function auditEn(){
+    var r = {struct:[], blank:[], cjk:[], num:[], noEn:false};
+    if(!isObj(state)) return r;
+    if(!isObj(state.en)){ r.noEn = true; return r; }
+    var seen = {};
+    CHECK_LISTS.forEach(function(c){
+      var a = getP(c.p), b = getP('en.' + c.p);
+      var la = Array.isArray(a) ? a.length : 0, lb = Array.isArray(b) ? b.length : 0;
+      if(la !== lb){ r.struct.push({p:c.p, n:c.n, cn:la, en:lb}); seen[c.p] = 1; }
+    });
+    (getP('cases.list') || []).forEach(function(cat, i){
+      var e = getP('en.cases.list.' + i);
+      var a = (cat.cases || []).length, b = (e && Array.isArray(e.cases)) ? e.cases.length : 0;
+      if(a !== b){ var p = 'cases.list.' + i + '.cases'; r.struct.push({p:p, n:'分类「' + cat.title + '」下的案例', cn:a, en:b}); seen[p] = 1; }
+    });
+    var fs = enFields();
+    fs.forEach(function(f){
+      if(CJK_RE.test(f.en)) r.cjk.push(f);
+      if(!f.en.trim() && f.cn.trim()) r.blank.push(f);
+      if(f.arr && f.enLen >= 0 && f.cnLen > f.enLen && !seen[f.cnPath]){
+        r.struct.push({p:f.cnPath, n:'「' + f.where + ' · ' + f.label + '」条目', cn:f.cnLen, en:f.enLen});
+        seen[f.cnPath] = 1;
+      }
+    });
+    NUMERIC_PATHS.forEach(function(np){
+      expandPairs(np.p).forEach(function(pr){
+        var sc = digitSig(pr.cn), se = digitSig(pr.en);
+        if(sc && se && sc !== se) r.num.push({p:pr.p, n:np.n, cn:pr.cn, en:pr.en});
+      });
+    });
+    return r;
+  }
+  function auditCount(r){ return r.noEn ? 1 : (r.struct.length + r.blank.length + r.cjk.length + r.num.length); }
+
+  /* ④ 本机备份 */
+  function saveEnCache(){
+    try{ if(isObj(state) && isObj(state.en)) localStorage.setItem(EN_CACHE_KEY, JSON.stringify({t: Date.now(), en: state.en})); }catch(err){}
+  }
+  function loadEnCache(){
+    try{ var s = localStorage.getItem(EN_CACHE_KEY); if(!s) return null; var o = JSON.parse(s); return isObj(o.en) ? o.en : null; }catch(err){ return null; }
+  }
+  function blankize(cv){
+    if(Array.isArray(cv)) return cv.map(blankize);
+    if(isObj(cv)){ var o = {}; for(var k in cv){ if(!cv.hasOwnProperty(k) || k === 'en') continue; o[k] = blankize(cv[k]); } return o; }
+    return (typeof cv === 'number' || typeof cv === 'boolean') ? cv : '';
+  }
+  function buildEnSkeleton(){
+    var sk = {};
+    for(var k in state){ if(!state.hasOwnProperty(k) || k === 'en') continue; sk[k] = blankize(state[k]); }
+    sk.updatedAt = state.updatedAt || '';
+    state.en = sk;
+    mirrorAll();
+  }
+  function fillMissingEn(){
+    var fs = enFields();
+    var paths = CHECK_LISTS.map(function(c){ return c.p; });
+    (getP('cases.list') || []).forEach(function(_, i){ paths.push('cases.list.' + i + '.cases'); });
+    paths.forEach(function(p){
+      var a = getP(p), b = getP('en.' + p);
+      if(!Array.isArray(a)) return;
+      if(!Array.isArray(b)){ setPE('en.' + p, []); b = getP('en.' + p); }
+      while(b.length < a.length){ b.push(blankize(a[b.length])); }
+    });
+    fs.forEach(function(f){
+      if(!f.arr || f.enLen < 0 || f.cnLen <= f.enLen) return;
+      var cur = getP(f.path);
+      if(!Array.isArray(cur)){ setPE(f.path, []); cur = getP(f.path); }
+      while(cur.length < f.cnLen) cur.push('');
+    });
+    mirrorAll();
+  }
+
+  /* ---------- 英文版界面 ---------- */
+  var enOnlyIssue = false;
+  function enIssue(f){
+    return (!f.en.trim() && f.cn.trim()) || CJK_RE.test(f.en) || (f.arr && f.cnLen !== f.enLen);
+  }
+  function enFieldHTML(f){
+    var miss = !f.en.trim() && f.cn.trim(), bad = CJK_RE.test(f.en);
+    var flags = (miss ? '<span class="en-flag miss">英文空缺</span>' : '') + (bad ? '<span class="en-flag cjk">含中文</span>' : '');
+    var has = f.cn.trim() ? '1' : '0';
+    var h = '<div class="en-item' + (miss ? ' miss' : (bad ? ' cjk' : '')) + '">' +
+      '<div class="hd"><span class="lb">' + esc(f.label) + '</span><span class="pt">' + esc(f.cnPath) + '</span></div>' +
+      '<div class="where">' + esc(f.where) + '</div>' +
+      '<div class="en-cn' + (f.cn.trim() ? '' : ' empty') + '">' + (f.cn.trim() ? esc(f.cn) : '（中文此处也是空的）') + '</div>';
+    if(f.type === 'lines'){
+      h += '<textarea data-enpath="' + esc(f.path) + '" data-type="lines" data-cnhas="' + has + '" placeholder="一行一条，条数要与中文一致">' + esc(f.en) + '</textarea>';
+    }else if(f.type === 'textarea'){
+      h += '<textarea data-enpath="' + esc(f.path) + '" data-cnhas="' + has + '">' + esc(f.en) + '</textarea>';
+    }else{
+      h += '<input data-enpath="' + esc(f.path) + '" data-cnhas="' + has + '" value="' + esc(f.en) + '">';
+    }
+    return h + '<div class="en-flags" style="margin-top:6px;">' + flags + '</div></div>';
+  }
+  function enChips(r){
+    if(r.noEn) return '<span class="en-chip bad">英文侧整体缺失</span>';
+    if(auditCount(r) === 0) return '<span class="en-chip ok">✓ 英文侧已同步</span>';
+    return '<span class="en-chip warn">结构不对齐 ' + r.struct.length + '</span>' +
+      '<span class="en-chip warn">英文空缺 ' + r.blank.length + '</span>' +
+      (r.cjk.length ? '<span class="en-chip bad">含中文 ' + r.cjk.length + '</span>' : '') +
+      (r.num.length ? '<span class="en-chip bad">数字不一致 ' + r.num.length + '</span>' : '');
+  }
+  function renderEnEditor(){
+    if(!isObj(state)) return;
+    var r = auditEn(), fs = enFields(), html = '';
+    html += '<div class="panel"><div class="en-chips">' + enChips(r) + '</div>' +
+      '<div class="hint" style="margin:11px 0 0;">图片、图集、案例编号、跳转、电话坐标这些<b>和语言无关的内容会自动同步</b>，这里只管文字。<b>每行一条</b>的字段请保持条数与中文一致。</div>' +
+      '<div class="en-chips" style="margin-top:11px;">' +
+      '<button class="btn btn-sm btn-ghost" id="btn-en-check">同步体检报告</button>' +
+      '<button class="btn btn-sm btn-ghost" id="btn-en-mark">标记英文已同步</button>' +
+      '<button class="btn btn-sm btn-ghost" id="btn-en-filter">' + (enOnlyIssue ? '显示全部文案' : '只看待处理') + '</button>' +
+      '<button class="btn btn-sm btn-ghost" id="btn-en-cache">备份英文到本机</button>' +
+      '<button class="btn btn-sm btn-ghost" id="btn-en-restore">从本机备份恢复</button>' +
+      '</div>' +
+      '<div class="en-chips" style="margin-top:9px;">' +
+      EN_ORDER.map(function(k){
+        var n = fs.filter(function(f){ return f.cnPath.split('.')[0] === k && (!enOnlyIssue || enIssue(f)); }).length;
+        return n ? '<a class="en-chip" href="#en-sec-' + k + '">' + esc(SEC_NAME[k]) + ' ' + n + '</a>' : '';
+      }).join('') +
+      '</div></div>';
+    if(r.noEn){
+      html += '<div class="en-warn-box">检测不到英文内容。建议先点上方「<b>载入线上最新</b>」把线上英文拉回来；若线上也没有，可生成空白骨架再逐条填写。' +
+        '<div class="fix"><button class="btn btn-sm btn-danger" id="btn-en-skel">生成空白英文骨架（会清空英文文字）</button></div></div>';
+      editorEl.innerHTML = html; bindEnToolbar();
+      return;
+    }
+    if(r.struct.length){
+      html += '<div class="en-warn-box"><b>结构不对齐 ' + r.struct.length + ' 处</b>（中文有、英文没有，或条数不同）：<ul>' +
+        r.struct.map(function(s){ return '<li>' + esc(s.n) + '：中文 <b>' + s.cn + '</b> / 英文 <b>' + s.en + '</b></li>'; }).join('') +
+        '</ul>' + (r.struct.some(function(s){ return s.cn > s.en; }) ? '<div class="fix"><button class="btn btn-sm btn-ghost" id="btn-en-fill">补齐缺失条目（留空待填）</button></div>' : '') +
+        '</div>';
+    }
+    if(r.num.length){
+      html += '<div class="en-warn-box"><b>数字不一致 ' + r.num.length + ' 处</b>（面积/人数这类数值中英应当一致）：<ul>' +
+        r.num.map(function(s){ return '<li>' + esc(s.n) + '：中文 <b>' + esc(s.cn) + '</b> / 英文 <b>' + esc(s.en) + '</b></li>'; }).join('') +
+        '</ul></div>';
+    }
+    EN_ORDER.forEach(function(secKey){
+      var list = fs.filter(function(f){ return f.cnPath.split('.')[0] === secKey; });
+      if(enOnlyIssue) list = list.filter(enIssue);
+      if(!list.length) return;
+      html += '<div class="en-sec-label" id="en-sec-' + secKey + '">' + esc(SEC_NAME[secKey] || secKey) +
+        '<span class="n">' + list.length + ' 条</span></div><div class="panel">' +
+        list.map(enFieldHTML).join('') + '</div>';
+    });
+    editorEl.innerHTML = html;
+    bindEnToolbar();
+  }
+  function copyText(txt, okMsg){
+    function fb(){
+      var ta = document.createElement('textarea'); ta.value = txt;
+      document.body.appendChild(ta); ta.select();
+      try{ document.execCommand('copy'); toast(okMsg); }catch(err){ toast('复制失败，请手动选择'); }
+      ta.remove();
+    }
+    if(navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(txt).then(function(){ toast(okMsg); }, fb); }
+    else fb();
+  }
+  function enReportText(){
+    var r = auditEn(), L = [];
+    L.push('【英文版待同步清单】' + new Date().toISOString().slice(0, 10));
+    if(r.noEn){ L.push('英文侧整体缺失，需要重新补一版英文。'); return L.join('\n'); }
+    L.push('中文改动日 ' + (state.updatedAt || '-') + ' / 英文标记日 ' + ((state.en || {}).updatedAt || '-'));
+    L.push('');
+    if(auditCount(r) === 0){ L.push('✔ 英文侧已完全同步，无需处理。'); return L.join('\n'); }
+    if(r.struct.length){
+      L.push('■ 结构不对齐 ' + r.struct.length + ' 处');
+      r.struct.forEach(function(s){ L.push('- ' + s.n + '（' + s.p + '）：中文 ' + s.cn + ' 项 / 英文 ' + s.en + ' 项'); });
+      L.push('');
+    }
+    if(r.blank.length){
+      L.push('■ 英文空缺（中文有内容、英文为空）' + r.blank.length + ' 处');
+      r.blank.forEach(function(f){ L.push('- ' + f.cnPath + '　[' + f.where + ' · ' + f.label + ']\n  中文：' + f.cn.replace(/\n/g, ' / ')); });
+      L.push('');
+    }
+    if(r.cjk.length){
+      L.push('■ 英文里混入了中文 ' + r.cjk.length + ' 处');
+      r.cjk.forEach(function(f){ L.push('- ' + f.cnPath + '：' + f.en.replace(/\n/g, ' / ')); });
+      L.push('');
+    }
+    if(r.num.length){
+      L.push('■ 数字不一致 ' + r.num.length + ' 处');
+      r.num.forEach(function(s){ L.push('- ' + s.n + '（' + s.p + '）：中文 ' + s.cn + ' / 英文 ' + s.en); });
+      L.push('');
+    }
+    return L.join('\n');
+  }
+  function showEnReport(){
+    var txt = enReportText();
+    var pv = document.getElementById('preview-body');
+    pv.innerHTML = '<div class="p-title">英文版同步体检</div>' +
+      '<div class="en-report">' + esc(txt) + '</div>' +
+      '<div style="margin-top:16px;display:flex;gap:9px;justify-content:center;flex-wrap:wrap;">' +
+      '<button class="btn btn-gold" id="btn-report-copy">复制清单</button>' +
+      '<button class="btn btn-dark" id="btn-report-close">关闭</button></div>';
+    document.getElementById('preview').style.display = 'block';
+    document.body.style.overflow = 'hidden';
+    document.getElementById('btn-report-close').onclick = function(){
+      document.getElementById('preview').style.display = 'none'; document.body.style.overflow = '';
+    };
+    document.getElementById('btn-report-copy').onclick = function(){ copyText(txt, '清单已复制，可直接发给助手'); };
+  }
+  function bindEnToolbar(){
+    function on(id, fn){ var b = document.getElementById(id); if(b) b.onclick = fn; }
+    on('btn-en-check', showEnReport);
+    on('btn-en-filter', function(){ enOnlyIssue = !enOnlyIssue; renderEditor(); window.scrollTo(0, 0); });
+    on('btn-en-mark', function(){
+      state.updatedAt = state.updatedAt || new Date().toISOString().slice(0, 10);
+      state.en.updatedAt = state.updatedAt;
+      saveEnCache(); renderTabs(); renderEditor();
+      toast('已标记英文侧为最新');
+    });
+    on('btn-en-cache', function(){ saveEnCache(); toast('英文内容已备份到本机浏览器'); });
+    on('btn-en-restore', function(){
+      var c = loadEnCache();
+      if(!c){ toast('本机没有英文备份'); return; }
+      if(!confirm('用本机备份覆盖当前英文内容？')) return;
+      state.en = clone(c); mirrorAll(); saveEnCache(); renderTabs(); renderEditor();
+      toast('已从本机备份恢复英文内容');
+    });
+    on('btn-en-skel', function(){
+      if(!confirm('将清空英文侧文字并按中文结构重建骨架，确定吗？')) return;
+      buildEnSkeleton(); saveEnCache(); renderTabs(); renderEditor();
+      toast('已生成空白英文骨架，请逐条填写');
+    });
+    on('btn-en-fill', function(){
+      fillMissingEn(); saveEnCache(); renderTabs(); renderEditor();
+      toast('已补上缺失条目，请填写英文');
+    });
+  }
+
   /* ---------- 导出 / 复制 / 导入 ---------- */
   function buildJSON(){
     state.updatedAt = new Date().toISOString().slice(0, 10);
+    if(!isObj(state.en)) return state;              /* 英文侧本就缺失，原样导出（界面会提示） */
+    mirrorAll();                                    /* 图片等语言无关字段自动同步到英文侧 */
+    state.en.updatedAt = (auditCount(auditEn()) === 0) ? state.updatedAt : (state.en.updatedAt || '');
+    saveEnCache();
     return state;
   }
 
+  /* 载入 / 导入统一入口：英文侧缺失时自动从本机备份补回 */
+  function acceptData(d, okMsg){
+    state = d;
+    var noEn = !isObj(state.en), restored = false;
+    if(noEn){
+      var c = loadEnCache();
+      if(c){ state.en = c; restored = true; noEn = false; }
+    }
+    if(!noEn){ mirrorAll(); saveEnCache(); }
+    renderTabs(); renderEditor();
+    var n = noEn ? 1 : auditCount(auditEn());
+    if(restored) toast('已载入，并自动补回上次的英文内容');
+    else if(noEn) toast('已载入，但英文侧整体缺失，请到「英文版」页签处理');
+    else if(n) toast((okMsg ? okMsg + '，' : '已载入，') + '英文侧还有 ' + n + ' 处待处理');
+    else toast((okMsg || '已载入') + '，中英文均已同步');
+  }
+
   document.getElementById('btn-save').addEventListener('click', function(){
-    var blob = new Blob([JSON.stringify(buildJSON(), null, 2)], {type:'application/json'});
+    var data = buildJSON();
+    var blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
     var a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
     a.download = 'site.json';
     document.body.appendChild(a); a.click(); a.remove();
     setTimeout(function(){ URL.revokeObjectURL(a.href); }, 4000);
-    toast('已导出 site.json，发给助手即可上线');
+    var n = isObj(state.en) ? auditCount(auditEn()) : 1;
+    if(n) toast('已导出 site.json。英文侧还有 ' + n + ' 处待处理，点「英文版」查看');
+    else toast('已导出 site.json，中英文均已同步，发给助手即可上线');
   });
 
   document.getElementById('btn-copy').addEventListener('click', function(){
-    var txt = JSON.stringify(buildJSON());
-    if(navigator.clipboard && navigator.clipboard.writeText){
-      navigator.clipboard.writeText(txt).then(function(){ toast('JSON 已复制到剪贴板'); });
-    }else{
-      var ta = document.createElement('textarea');
-      ta.value = txt; document.body.appendChild(ta); ta.select();
-      document.execCommand('copy'); ta.remove(); toast('JSON 已复制到剪贴板');
-    }
+    copyText(JSON.stringify(buildJSON()), 'JSON 已复制到剪贴板');
   });
 
   document.getElementById('btn-import').addEventListener('click', function(){
@@ -699,12 +1202,11 @@
     var rd = new FileReader();
     rd.onload = function(){
       try{
-        state = JSON.parse(rd.result);
-        renderTabs(); renderEditor();
-        toast('已导入 site.json，可继续编辑');
+        acceptData(JSON.parse(rd.result), '已导入 site.json，可继续编辑');
       }catch(err){ toast('文件格式有误，导入失败'); }
     };
     rd.readAsText(f);
+    e.target.value = '';
   });
 
   /* ---------- 预览 ---------- */
@@ -759,18 +1261,14 @@
     if(!confirm('载入线上最新内容？当前页面未导出的修改会丢失。')) return;
     fetch('site-public.json?v=' + Date.now())
       .then(function(r){ if(!r.ok) throw 0; return r.json(); })
-      .then(function(d){ state = d; renderTabs(); renderEditor(); toast('已载入线上最新内容'); })
+      .then(function(d){ acceptData(d, '已载入线上最新内容'); })
       .catch(function(){ toast('载入失败，请刷新页面重试'); });
   });
 
   /* ---------- 初始化 ---------- */
   fetch('site-public.json?v=' + Date.now())
     .then(function(r){ if(!r.ok) throw 0; return r.json(); })
-    .then(function(d){
-      state = d;
-      renderTabs(); renderEditor();
-      toast('已加载线上内容，可直接编辑');
-    })
+    .then(function(d){ acceptData(d, null); })
     .catch(function(){
       toast('未加载到 site.json，请点击「导入修改」选择文件');
     });
