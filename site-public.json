@@ -512,7 +512,11 @@
       "images/75e6a865adcd6cd47697449559868b43.jpg",
       "images/4787b2b9421bb7d0441ecb9229aea1c8.jpg",
       "images/29c6719c5ff120c2f35010997a967efa.jpg",
-      "images/de5f5c4f97aca4f2b10aad1405365eed.jpg"
+      "images/de5f5c4f97aca4f2b10aad1405365eed.jpg",
+      "images/92c4635efa81a5e64e0841ee463b0a09.jpg",
+      "images/521af58cd4b55162ed13b61f035cda59.jpg",
+      "images/e623fa913351053e14b8626f05552d1b.jpg",
+      "images/e8ed02a007915b4d3b34b2871585184c.jpg"
     ],
     "kicker": "Meeting & Event",
     "title": "MICE 案例",
@@ -767,22 +771,6 @@
               100,
               101
             ]
-          },
-          {
-            "id": "",
-            "title": "磊易&品河石材展晚宴",
-            "cover": 183,
-            "meta": [
-              "2400㎡ 厦门厅"
-            ],
-            "desc": "",
-            "images": [
-              183,
-              184,
-              185,
-              186,
-              187
-            ]
           }
         ]
       },
@@ -1020,6 +1008,21 @@
               180,
               181,
               182
+            ]
+          },
+          {
+            "id": "",
+            "title": "磊易&品河石材展晚宴",
+            "cover": 188,
+            "meta": [
+              "2400㎡ 厦门厅"
+            ],
+            "desc": "",
+            "images": [
+              189,
+              190,
+              191,
+              188
             ]
           }
         ]
@@ -1666,7 +1669,11 @@
         "images/75e6a865adcd6cd47697449559868b43.jpg",
         "images/4787b2b9421bb7d0441ecb9229aea1c8.jpg",
         "images/29c6719c5ff120c2f35010997a967efa.jpg",
-        "images/de5f5c4f97aca4f2b10aad1405365eed.jpg"
+        "images/de5f5c4f97aca4f2b10aad1405365eed.jpg",
+        "images/92c4635efa81a5e64e0841ee463b0a09.jpg",
+        "images/521af58cd4b55162ed13b61f035cda59.jpg",
+        "images/e623fa913351053e14b8626f05552d1b.jpg",
+        "images/e8ed02a007915b4d3b34b2871585184c.jpg"
       ],
       "kicker": "Meeting & Event",
       "title": "Signature Cases",
@@ -1921,22 +1928,6 @@
                 100,
                 101
               ]
-            },
-            {
-              "id": "",
-              "title": "Leiyi & Pinhe Stone Exhibition Dinner",
-              "cover": 183,
-              "meta": [
-                "2,400㎡ Xiamen Ballroom"
-              ],
-              "desc": "",
-              "images": [
-                183,
-                184,
-                185,
-                186,
-                187
-              ]
             }
           ]
         },
@@ -2175,6 +2166,21 @@
                 181,
                 182
               ]
+            },
+            {
+              "id": "",
+              "title": "Leiyi & Pinhe Stone Exhibition Dinner",
+              "cover": 188,
+              "meta": [
+                "2,400㎡ Xiamen Ballroom"
+              ],
+              "desc": "",
+              "images": [
+                189,
+                190,
+                191,
+                188
+              ]
             }
           ]
         }
@@ -2296,8 +2302,12 @@
             "images/dcc83647ff259684d079f6a799b9682a.jpg",
             "images/fe6e2be4cd917b8335d79b639d33f24d.jpg",
             "images/3d9e0ade766ecd1001b0b5617aa7c7b6.jpg",
-            "images/569cd153962f4dc0eb29df055e6f4e96.jpg",
-            "images/19f35761199bbed9a3d0b9a005ce89a6.jpg"
+            {
+              "image": "images/569cd153962f4dc0eb29df055e6f4e96.jpg"
+            },
+            {
+              "image": "images/19f35761199bbed9a3d0b9a005ce89a6.jpg"
+            }
           ],
           "meta": [
             "Intimate & Warm",
